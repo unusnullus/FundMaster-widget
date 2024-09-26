@@ -1,0 +1,42 @@
+.select-payment-container {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  gap: 24px;
+}
+
+.select-payment-title {
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.cards-container {
+  display: flex;
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 260px;
+  height: 140px;
+  padding: 20px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--widget-stroke);
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border: 1px solid var(--widget-blue);
+  background: var(--widget-light-blue);
+}
+
+.logo-container {
+  display: flex;
+  gap: 14px;
+}

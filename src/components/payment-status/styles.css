@@ -1,0 +1,47 @@
+.payment-status-container {
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  gap: 32px;
+}
+
+.status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+
+  span.status {
+    font-weight: 500;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 235px;
+}
+
+.loader {
+  border: 8px solid var(--widget-background-color);
+  border-left-color: var(--widget-blue);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
