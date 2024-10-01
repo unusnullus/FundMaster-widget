@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ 'main' ]
+  workflow_dispatch:
+
+jobs:
+  build_dev:
+    if: github.ref == 'refs/heads/main'
+    uses: unusnullus/workflows/.github/workflows/build-args.yaml@master
+    with:
+      runsOn: self-hosted
+      releaseName: ${{ vars.RELEASE_NAME }}
+      dockerRepository: ${{ vars.DOCKER_REPOSITORY }}
+      imageArtifactName: "docker_image_artifact"
+      environment: "dev"
+      buildArgs: ${{ vars.BUILD_ARGS_DEV }}
+    secrets:
+      dockerRepositoryUser: ${{ secrets.DOCKER_REPOSITORY_USER }}
+      dockerRepositoryToken: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
+
+  build_prod:
+    if: github.ref == 'refs/heads/release'
+    uses: unusnullus/workflows/.github/workflows/build-args.yaml@master
+    with:
+      runsOn: self-hosted
+      releaseName: ${{ vars.RELEASE_NAME }}
+      dockerRepository: ${{ vars.DOCKER_REPOSITORY }}
+      imageArtifactName: "docker_image_artifact"
+      environment: "prod"
+      buildArgs: ${{ vars.BUILD_ARGS_PROD }}
+    secrets:
+      dockerRepositoryUser: ${{ secrets.DOCKER_REPOSITORY_USER }}
+      dockerRepositoryToken: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
+
+  deploy_dev:
+    if: github.ref == 'refs/heads/main'
+    needs: build_dev
+    uses: unusnullus/workflows/.github/workflows/deploy-k8s.yaml@master
+    with:
+      runsOn: self-hosted
+      releaseName: ${{vars.RELEASE_NAME}}
+      environment: "dev"
+      namespace: ${{vars.NAMESPACE}}
+      imageArtifactName: "docker_image_artifact"
+      devopsRepoBranch: ${{vars.DEVOPS_REPO_BRANCH}}
+      context: ${{vars.CONTEXT_DEV}}
+      deployTimeout: ${{vars.DEPLOY_TIMEOUT}}
+      chart: ${{vars.CHART}}
+    secrets:
+      devopsRepoKey: ${{secrets.DEVOPS_REPO_KEY}}
+      devopsRepoUrl: ${{secrets.DEVOPS_REPO_URL}}
+
+  deploy_prod:
+    if: github.ref == 'refs/heads/release'
+    needs: build_prod
+    uses: unusnullus/workflows/.github/workflows/deploy-k8s.yaml@master
+    with:
+      runsOn: self-hosted
+      releaseName: ${{vars.RELEASE_NAME}}
+      environment: "prod"
+      namespace: ${{vars.NAMESPACE}}
+      imageArtifactName: "docker_image_artifact"
+      devopsRepoBranch: ${{vars.DEVOPS_REPO_BRANCH}}
+      context: ${{vars.CONTEXT_PROD}}
+      deployTimeout: ${{vars.DEPLOY_TIMEOUT}}
+      chart: ${{vars.CHART}}
+    secrets:
+      devopsRepoKey: ${{secrets.DEVOPS_REPO_KEY}}
+      devopsRepoUrl: ${{secrets.DEVOPS_REPO_URL}}
