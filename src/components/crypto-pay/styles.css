@@ -15,6 +15,7 @@
 .timer {
   display: flex;
   padding: 10px 16px;
+  width: 75px;
   justify-content: center;
   align-items: center;
   border: 1px solid var(--widget-blue);
@@ -60,4 +61,10 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

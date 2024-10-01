@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { AppContainerProps } from "./types";
+import { AppContainerProps } from "./types/types";
 
 export const GlobalStyle = createGlobalStyle`
   :root {

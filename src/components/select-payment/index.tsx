@@ -9,7 +9,7 @@ import AppleIcon from "../../assets/apple.svg";
 import BitcoinIcon from "../../assets/bitcoin.svg";
 import EthereumIcon from "../../assets/ethereum.svg";
 import styles from "./styles.css";
-import { PaymentMethods } from "../../enums";
+import { PaymentMethods } from "../../constants/enums";
 
 interface SelectPaymentProps {
   onClose: () => void;
@@ -28,8 +28,6 @@ const SelectPayment: FunctionalComponent<SelectPaymentProps> = ({ onClose, onCli
             <MasterIcon />
             <UnionPayIcon />
             <AmexIcon />
-            <GoogleIcon />
-            <AppleIcon />
           </div>
           <div>Credit or debit card</div>
         </div>

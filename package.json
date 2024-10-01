@@ -9,7 +9,13 @@
   },
   "dependencies": {
     "@preact/compat": "^18.3.1",
+    "@tanstack/react-query": "^5.56.2",
+    "axios": "^1.7.7",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
     "preact": "^10.24.0",
+    "process": "^0.11.10",
+    "react-qr-code": "^2.0.15",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {
@@ -19,6 +25,7 @@
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@svgr/webpack": "^8.1.0",
+    "@types/crypto-js": "^4.2.2",
     "babel-plugin-styled-components": "^2.1.4",
     "css-loader": "^7.1.2",
     "file-loader": "^6.2.0",

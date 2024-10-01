@@ -16,11 +16,23 @@
   display: flex;
   justify-content: space-between;
   font-size: 20px;
+  width: 100%;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  height: 109px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .items-list {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .item-container {
