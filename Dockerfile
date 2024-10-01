@@ -5,8 +5,8 @@ ENV BUILD_SCRIPT=${build_script} \
 
 WORKDIR /build/src
 
-COPY package.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn install
 
 COPY ./ ./
 RUN npm run ${BUILD_SCRIPT}
