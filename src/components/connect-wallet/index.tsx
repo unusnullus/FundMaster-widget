@@ -1,8 +1,7 @@
-import Web3Icon from "../../assets/web3.svg";
 import UsdtIcon from "../../assets/usdt.svg";
+import UsdcIcon from "../../assets/usdc.svg";
 import BitcoinIcon from "../../assets/bitcoin-token.svg";
 import EthereumIcon from "../../assets/ethereum-token.svg";
-import LitecoinIcon from "../../assets/litecoin.svg";
 import MetamaskIcon from "../../assets/metamask.svg";
 import CoinbaseIcon from "../../assets/coinbase.svg";
 import BinanceIcon from "../../assets/binance.svg";
@@ -14,10 +13,15 @@ import styles from "./styles.css";
 import { FunctionalComponent } from "preact";
 import { useState } from "preact/hooks";
 import Button from "../button";
+import { usePaymentOptions } from "../../services/customer/use-payment-options";
+import { PaymentOption } from "../../types/merchant";
+import { usePayIn } from "../../services/customer/use-pay-in";
+import { formatNumber } from "../../lib/format-number";
 
 interface ConnectWalletProps {
   onNext: () => void;
   onClose: () => void;
+  token: string;
 }
 
 interface Token {
@@ -27,12 +31,12 @@ interface Token {
   currency: string;
 }
 
-const CRYPTO_LIST: Token[] = [
-  { Icon: UsdtIcon, title: "USDT", value: 23.04, currency: "USDT" },
-  { Icon: BitcoinIcon, title: "Bitcoin", value: 0.00261345, currency: "BTC" },
-  { Icon: EthereumIcon, title: "Ethereum", value: 0.061923, currency: "ETH" },
-  { Icon: LitecoinIcon, title: "Litecoin", value: 2.234085, currency: "LTC" },
-];
+const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
+  BTC: BitcoinIcon,
+  ETH: EthereumIcon,
+  USDT: UsdtIcon,
+  USDC: UsdcIcon,
+};
 
 const WALLET_LIST = [
   { Icon: MetamaskIcon, title: "Metamask", status: "Installed" },
@@ -40,17 +44,23 @@ const WALLET_LIST = [
   { Icon: CoinbaseIcon, title: "Ethereum", status: "" },
 ];
 
-const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext }) => {
+const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext, token }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Token | null>(null);
+  const [selectedItem, setSelectedItem] = useState<PaymentOption | null>(null);
   const [cryptoSearch, setCryptoSearch] = useState("");
   const [walletSearch, setWalletSearch] = useState("");
 
+  const { data: paymentOptions, isLoading } = usePaymentOptions(token);
+  const { mutate } = usePayIn();
+
+  const cryptoList = paymentOptions?.data.paymentOptions;
+
   const handleSelect = (index: number) => () => {
-    if (CRYPTO_LIST[index].title === selectedItem?.title) {
+    if (!cryptoList) return;
+    if (cryptoList[index].currencyTitle === selectedItem?.currencyTitle) {
       setSelectedItem(null);
-    } else setSelectedItem(CRYPTO_LIST[index]);
+    } else setSelectedItem(cryptoList[index]);
   };
 
   const handleDisconnect = () => {
@@ -71,12 +81,13 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
   };
 
   const handleNext = () => {
-    if (!isConnected || !selectedItem) return;
+    if (!selectedItem) return;
+    mutate({ token, currencyName: selectedItem.currencyCode, networkCode: selectedItem.networkCode });
     onNext();
   };
 
-  const filteredCryptoList = CRYPTO_LIST.filter((crypto) =>
-    crypto.title.toLowerCase().includes(cryptoSearch.toLowerCase())
+  const filteredCryptoList = [...(cryptoList ?? [])].filter((crypto) =>
+    crypto.currencyTitle.toLowerCase().includes(cryptoSearch.toLowerCase())
   );
 
   const filteredWalletList = WALLET_LIST.filter((wallet) =>
@@ -89,7 +100,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
 
       {!open && (
         <>
-          {isConnected ? (
+          {/* {isConnected ? (
             <div className="crypto-item">
               <div className="item-data-container">
                 <MetamaskIcon />
@@ -109,7 +120,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
                 <span className="button-text">Connect Web3 wallet</span>
               </div>
             </Button>
-          )}
+          )} */}
           <div className="search-container">
             <p className="step-title">Supported crypto currencies</p>
             <div className="search-input-container">
@@ -122,23 +133,31 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
               />
             </div>
             <div className="list-container">
-              {filteredCryptoList.map(({ title, Icon, value, currency }, index) => (
-                <div
-                  className={`crypto-item pointer ${selectedItem?.title === title ? "selected" : ""}`}
-                  key={index}
-                  onClick={handleSelect(index)}
-                >
-                  <div className="item-data-container">
-                    <Icon />
-                    <div className="item-data">
-                      <span className="title">{title}</span>
-                      <span>
-                        {value} {currency}
-                      </span>
+              {isLoading && <div className="loader" />}
+              {!isLoading &&
+                filteredCryptoList?.map(({ currencyTitle, currencyCode, amount }, index) => {
+                  const Icon = CRYPTO_ICONS[currencyCode];
+
+                  return (
+                    <div
+                      className={`crypto-item pointer ${
+                        selectedItem?.currencyTitle === currencyTitle ? "selected" : ""
+                      }`}
+                      key={index}
+                      onClick={handleSelect(index)}
+                    >
+                      <div className="item-data-container">
+                        {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}
+                        <div className="item-data">
+                          <span className="title">{currencyTitle}</span>
+                          <span>
+                            {formatNumber(amount, 6)} {currencyCode}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
             </div>
           </div>
           <div className="footer-button-container">

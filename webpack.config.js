@@ -1,5 +1,7 @@
+require("dotenv").config();
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = ({ esm }) => ({
   entry: path.join(__dirname, "src"),
@@ -56,10 +58,26 @@ module.exports = ({ esm }) => ({
       react: "preact/compat",
       "react/jsx-runtime": "preact/jsx-runtime",
     },
+    fallback: {
+      vm: false,
+      buffer: false,
+      stream: false,
+      util: false,
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
+    }),
+    new webpack.DefinePlugin({
+      "process.env.MERCHANT_API": JSON.stringify(process.env.MERCHANT_API),
+      "process.env.SECRET_KEY": JSON.stringify(process.env.SECRET_KEY),
+      "process.env.API_KEY": JSON.stringify(process.env.API_KEY),
+    }),
+
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
+      process: "process/browser",
     }),
   ],
   devtool: "source-map",

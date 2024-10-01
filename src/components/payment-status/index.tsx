@@ -9,34 +9,12 @@ interface PaymentStatusProps {
 }
 
 const PaymentStatus: FunctionalComponent<PaymentStatusProps> = ({ onClose }) => {
-  const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPaymentSuccessful(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="payment-status-container">
       <style>{styles.toString()}</style>
-
       <div className="status-container">
-        {isPaymentSuccessful ? (
-          <>
-            <SuccessIcon />
-            <span className="status">Your payment is successful</span>
-          </>
-        ) : (
-          <>
-            <div className="progress">
-              <div className="loader" />
-            </div>
-            <span className="status">Processing your payment</span>
-          </>
-        )}
+        <SuccessIcon />
+        <span className="status">Your payment is successful</span>
       </div>
       <Button variant="secondary" onClick={onClose}>
         Back to merchant

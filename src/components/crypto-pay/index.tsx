@@ -1,42 +1,61 @@
 import { FunctionalComponent } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
+import { memo } from "preact/compat";
+import QRcode from "react-qr-code";
 
 import CopyIcon from "../../assets/copy.svg";
 import CloseIcon from "../../assets/close.svg";
 
 import styles from "./styles.css";
 import Button from "../button";
+import { formatNumber } from "../../lib/format-number";
+import { useCountdown } from "../../hooks/use-count-down";
+import { useCancelPaymentRequest } from "../../services/merchant/use-cancel-payment-request";
 
 interface ConnectWalletProps {
   onNext: () => void;
   onBack: () => void;
   onClose: () => void;
+  onReset: () => void;
+  address?: string;
+  amount?: string;
+  currencyName?: string;
+  date?: string;
+  requestId?: number;
 }
 
-const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext, onBack }) => {
-  const [timeLeft, setTimeLeft] = useState(5 * 60);
+const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
+  onClose,
+  onNext,
+  onBack,
+  onReset,
+  address,
+  amount,
+  currencyName,
+  date,
+  requestId,
+}) => {
   const [isTimeOut, setIsTimeOut] = useState(false);
+  const { mutate } = useCancelPaymentRequest();
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+  const handleExpire = () => {
+    setIsTimeOut(true);
+    onReset();
+    mutate(requestId);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(interval);
-          setIsTimeOut(true);
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
+  const timeLeft = useCountdown(handleExpire, date);
 
-    return () => clearInterval(interval);
-  }, [onClose]);
+  const formattedTime = useMemo(() => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }, [timeLeft]);
+
+  const formattedAmount = useMemo(
+    () => (amount ? `${formatNumber(amount, 6)} ${currencyName}` : ""),
+    [amount, currencyName]
+  );
 
   return (
     <div className="container">
@@ -46,26 +65,24 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext, o
         <>
           <div className="connect-wallet-title">
             <p className="crypto-title">Pay for your order</p>
-            <div className="timer">{formatTime(timeLeft)}</div>
+            <div className="timer">{formattedTime}</div>
           </div>
           <div className="network-container">
             <span className="input-title">Network</span>
             <span>TRC20</span>
           </div>
-          <Button variant="primary" onClick={onNext}>
-            Pay
-          </Button>
+          <div className="qr-code-container">{address && <QRcode value={address} size={140} />}</div>
           <div className="pay-field">
             <span className="input-title">Amount to pay</span>
             <div className="pay-data-container">
-              <span>23.04 USDT</span>
+              <span>{formattedAmount}</span>
               <CopyIcon className="pointer" />
             </div>
           </div>
           <div className="pay-field">
             <span className="input-title">Pay to this address</span>
             <div className="pay-data-container">
-              <span>MWTk543dlsnsk6489wrksakjdhwjhdkjaskjd4</span>
+              <span>{address}</span>
               <CopyIcon className="pointer" />
             </div>
           </div>
@@ -88,4 +105,4 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext, o
   );
 };
 
-export default CryptoPay;
+export default memo(CryptoPay);

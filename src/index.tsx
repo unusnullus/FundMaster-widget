@@ -1,19 +1,22 @@
 import { render } from "preact";
 import { StyleSheetManager } from "styled-components";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PaymentWidget from "./payment-widget";
-import { EmbedProps, RootProps } from "./types";
+import { EmbedProps, RootProps } from "./types/types";
 import { AppContainer, GlobalStyle } from "./styles";
+
+const queryClient = new QueryClient();
 
 const PaymentWidgetRoot = ({ shadowRoot, fontFamily, onClose }: EmbedProps) => {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <GlobalStyle />
       <StyleSheetManager target={shadowRoot as unknown as HTMLElement}>
         <AppContainer fontFamily={fontFamily}>
           <PaymentWidget onClose={onClose} />
         </AppContainer>
       </StyleSheetManager>
-    </>
+    </QueryClientProvider>
   );
 };
 

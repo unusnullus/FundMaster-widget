@@ -1,23 +1,60 @@
-import Button from "./components/button";
-import SelectPayment from "./components/select-payment";
 import { useEffect, useState } from "preact/hooks";
 import Stepper from "./components/stepper";
 import styles from "./styles.css";
-import { PaymentMethods } from "./enums";
-import { PAYMENT_METHOD_STEPS } from "./constants";
-import CardDetails from "./components/card-details";
+import { PaymentMethods, STATUSES } from "./constants/enums";
+import { PAYMENT_METHOD_STEPS } from "./constants/constants";
 import OrderSummary from "./components/order-summary";
 import PaymentStatus from "./components/payment-status";
 import ConnectWallet from "./components/connect-wallet";
 import CryptoPay from "./components/crypto-pay";
+import { usePaymentRequest } from "./services/merchant/use-payment-request";
+import { useCancelPaymentRequest } from "./services/merchant/use-cancel-payment-request";
+import { usePaymentDetails } from "./services/customer/use-payment-details";
 
 interface PaymentDialogProps {
   onClose: () => void;
+  title?: string;
+  description?: string;
 }
 
-const PaymentWidget = ({ onClose }: PaymentDialogProps) => {
+const PaymentWidget = ({ onClose, title = "Item 1", description = "Test description" }: PaymentDialogProps) => {
+  const abortController = new AbortController();
+
   const [activeStep, setActiveStep] = useState(2);
-  const [method, setMethod] = useState<PaymentMethods | null>();
+  const [method, setMethod] = useState<PaymentMethods | null>(PaymentMethods.Crypto);
+
+  const {
+    data: paymentRequest,
+    mutate: createPaymentRequest,
+    reset,
+  } = usePaymentRequest(
+    {
+      uid: "test12",
+      operationId: "test",
+      title,
+      description,
+      baseAmount: "10",
+      baseCurrencyName: "USD",
+    },
+    abortController.signal
+  );
+
+  const token = paymentRequest?.data.customerToken ?? "";
+  const requestId = paymentRequest?.data.paymentRequest.id;
+
+  const { data: details, isLoading: isDetailsLoading } = usePaymentDetails(token, activeStep);
+  const status = details?.data.status;
+  const { mutate } = useCancelPaymentRequest();
+
+  const handleClose = () => {
+    if (requestId) {
+      mutate(requestId);
+    } else {
+      abortController.abort();
+    }
+
+    onClose();
+  };
 
   const handleNextStep = () => {
     setActiveStep((prev) => prev + 1);
@@ -25,49 +62,89 @@ const PaymentWidget = ({ onClose }: PaymentDialogProps) => {
 
   const handleBackToFirstStep = () => {
     setActiveStep(2);
-    setMethod(null);
+    setMethod(PaymentMethods.Crypto);
+    mutate(requestId);
+    createPaymentRequest();
   };
 
   useEffect(() => {
+    if (status === STATUSES.Paid) {
+      setActiveStep(5);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    createPaymentRequest();
+
+    return () => {
+      abortController.abort();
+
+      if (requestId) {
+        mutate(requestId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (requestId) {
+        mutate(requestId);
+      }
+      event.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [requestId]);
+
+  useEffect(() => {
     setActiveStep(2);
-    setMethod(null);
   }, []);
 
   const handleBackStep = () => {
     if (activeStep === 2) {
-      setMethod(null);
+      handleClose();
       return;
     }
 
     setActiveStep((prev) => prev - 1);
   };
 
-  const handleSelectPayment = (value: PaymentMethods) => () => {
-    setMethod(value);
-  };
-
-  const renderCardSteps = (step: number) => {
-    switch (step) {
-      case 2:
-        return <CardDetails onClose={handleBackStep} onNext={handleNextStep} />;
-      case 3:
-        return <OrderSummary onClose={handleBackStep} onNext={handleNextStep} />;
-      // case 4:
-      //   return <SecureForm onNext={handleNextStep} onClose={handleBackStep} />;
-      case 4:
-        return <PaymentStatus onClose={onClose} />;
-    }
-  };
   const renderCryptoSteps = (step: number) => {
     switch (step) {
       case 2:
-        return <ConnectWallet onClose={handleBackStep} onNext={handleNextStep} />;
+        return <ConnectWallet onClose={handleBackStep} onNext={handleNextStep} token={token} />;
       case 3:
-        return <OrderSummary onClose={handleBackStep} onNext={handleNextStep} />;
+        return (
+          <OrderSummary
+            onClose={handleBackStep}
+            onNext={handleNextStep}
+            title={details?.data.title}
+            description={details?.data.description}
+            currencyName={details?.data.currencyName}
+            amount={details?.data.amount}
+            isLoading={isDetailsLoading}
+          />
+        );
       case 4:
-        return <CryptoPay onClose={onClose} onNext={handleNextStep} onBack={handleBackToFirstStep} />;
+        return (
+          <CryptoPay
+            onClose={handleClose}
+            onNext={handleNextStep}
+            onBack={handleBackToFirstStep}
+            onReset={reset}
+            address={details?.data.address}
+            currencyName={details?.data.currencyName}
+            amount={details?.data.amount}
+            date={details?.data.expirationDate}
+            requestId={requestId}
+          />
+        );
       case 5:
-        return <PaymentStatus onClose={onClose} />;
+        return <PaymentStatus onClose={handleClose} />;
     }
   };
 
@@ -77,8 +154,6 @@ const PaymentWidget = ({ onClose }: PaymentDialogProps) => {
       {method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
         <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
       )}
-      {!method && <SelectPayment onClick={handleSelectPayment} onClose={onClose} />}
-      {method === PaymentMethods.Card && renderCardSteps(activeStep)}
       {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep)}
     </div>
   );
