@@ -19,6 +19,7 @@ jobs:
     secrets:
       dockerRepositoryUser: ${{ secrets.DOCKER_REPOSITORY_USER }}
       dockerRepositoryToken: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
+      buildSecrets: ${{ secrets.BUILD_SECRETS_DEV }}
 
   build_prod:
     if: github.ref == 'refs/heads/release'
@@ -33,6 +34,7 @@ jobs:
     secrets:
       dockerRepositoryUser: ${{ secrets.DOCKER_REPOSITORY_USER }}
       dockerRepositoryToken: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
+      buildSecrets: ${{ secrets.BUILD_SECRETS_PROD }}
 
   deploy_dev:
     if: github.ref == 'refs/heads/main'
