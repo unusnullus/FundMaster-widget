@@ -11,6 +11,8 @@ import Button from "../button";
 import { formatNumber } from "../../lib/format-number";
 import { useCountdown } from "../../hooks/use-count-down";
 import { useCancelPaymentRequest } from "../../services/merchant/use-cancel-payment-request";
+import { useClipboard } from "../../hooks/use-clipboard";
+import { PaymentOption } from "../../types/merchant";
 
 interface ConnectWalletProps {
   onNext: () => void;
@@ -22,6 +24,7 @@ interface ConnectWalletProps {
   currencyName?: string;
   date?: string;
   requestId?: number;
+  selectedCrypto: PaymentOption | null;
 }
 
 const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
@@ -34,9 +37,17 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   currencyName,
   date,
   requestId,
+  selectedCrypto,
 }) => {
   const [isTimeOut, setIsTimeOut] = useState(false);
   const { mutate } = useCancelPaymentRequest();
+  const { copyToClipboard } = useClipboard();
+
+  const handleCopy =
+    (text = "") =>
+    () => {
+      copyToClipboard(text);
+    };
 
   const handleExpire = () => {
     setIsTimeOut(true);
@@ -58,32 +69,34 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   );
 
   return (
-    <div className="container">
+    <div className="step-container">
       <style>{styles.toString()}</style>
 
       {!isTimeOut && (
         <>
           <div className="connect-wallet-title">
-            <p className="crypto-title">Pay for your order</p>
+            <p className="step-title">Pay for your order</p>
             <div className="timer">{formattedTime}</div>
           </div>
-          <div className="network-container">
-            <span className="input-title">Network</span>
-            <span>TRC20</span>
-          </div>
+          {selectedCrypto && (
+            <div className="network-container">
+              <span className="input-title">Network</span>
+              <span>{selectedCrypto.currencyTitle}</span>
+            </div>
+          )}
           <div className="qr-code-container">{address && <QRcode value={address} size={140} />}</div>
           <div className="pay-field">
             <span className="input-title">Amount to pay</span>
             <div className="pay-data-container">
               <span>{formattedAmount}</span>
-              <CopyIcon className="pointer" />
+              <CopyIcon className="pointer" onClick={handleCopy(formattedAmount)} />
             </div>
           </div>
           <div className="pay-field">
             <span className="input-title">Pay to this address</span>
             <div className="pay-data-container">
               <span>{address}</span>
-              <CopyIcon className="pointer" />
+              <CopyIcon className="pointer" onClick={handleCopy(address)} />
             </div>
           </div>
           <Button variant="secondary" onClick={onClose}>

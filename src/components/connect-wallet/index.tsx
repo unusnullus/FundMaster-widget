@@ -21,7 +21,9 @@ import { formatNumber } from "../../lib/format-number";
 interface ConnectWalletProps {
   onNext: () => void;
   onClose: () => void;
+  onSelect: (index: number, list?: PaymentOption[]) => () => void;
   token: string;
+  selectedCrypto: PaymentOption | null;
 }
 
 interface Token {
@@ -44,10 +46,15 @@ const WALLET_LIST = [
   { Icon: CoinbaseIcon, title: "Ethereum", status: "" },
 ];
 
-const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNext, token }) => {
+const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
+  onClose,
+  onNext,
+  onSelect,
+  selectedCrypto,
+  token,
+}) => {
   const [isConnected, setIsConnected] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<PaymentOption | null>(null);
   const [cryptoSearch, setCryptoSearch] = useState("");
   const [walletSearch, setWalletSearch] = useState("");
 
@@ -55,13 +62,6 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
   const { mutate } = usePayIn();
 
   const cryptoList = paymentOptions?.data.paymentOptions;
-
-  const handleSelect = (index: number) => () => {
-    if (!cryptoList) return;
-    if (cryptoList[index].currencyTitle === selectedItem?.currencyTitle) {
-      setSelectedItem(null);
-    } else setSelectedItem(cryptoList[index]);
-  };
 
   const handleDisconnect = () => {
     setIsConnected(false);
@@ -81,8 +81,8 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
   };
 
   const handleNext = () => {
-    if (!selectedItem) return;
-    mutate({ token, currencyName: selectedItem.currencyCode, networkCode: selectedItem.networkCode });
+    if (!selectedCrypto) return;
+    mutate({ token, currencyName: selectedCrypto.currencyCode, networkCode: selectedCrypto.networkCode });
     onNext();
   };
 
@@ -141,10 +141,10 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({ onClose, onNex
                   return (
                     <div
                       className={`crypto-item pointer ${
-                        selectedItem?.currencyTitle === currencyTitle ? "selected" : ""
+                        selectedCrypto?.currencyTitle === currencyTitle ? "selected" : ""
                       }`}
                       key={index}
-                      onClick={handleSelect(index)}
+                      onClick={onSelect(index, cryptoList)}
                     >
                       <div className="item-data-container">
                         {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}

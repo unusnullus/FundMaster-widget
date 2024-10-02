@@ -21,6 +21,16 @@
   }
 }
 
+@media (max-width: 768px) {
+  .status-container {
+    gap: 20px;
+
+    span.status {
+      font-size: 18px;
+    }
+  }
+}
+
 .progress {
   display: flex;
   align-items: center;

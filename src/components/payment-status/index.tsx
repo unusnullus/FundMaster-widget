@@ -10,7 +10,7 @@ interface PaymentStatusProps {
 
 const PaymentStatus: FunctionalComponent<PaymentStatusProps> = ({ onClose }) => {
   return (
-    <div className="payment-status-container">
+    <div className="step-container">
       <style>{styles.toString()}</style>
       <div className="status-container">
         <SuccessIcon />

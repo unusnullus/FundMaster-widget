@@ -11,6 +11,7 @@ import { usePaymentRequest } from "./services/merchant/use-payment-request";
 import { useCancelPaymentRequest } from "./services/merchant/use-cancel-payment-request";
 import { usePaymentDetails } from "./services/customer/use-payment-details";
 import styles from "./styles.css";
+import { PaymentOption } from "types/merchant";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -23,6 +24,7 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
 
   const [activeStep, setActiveStep] = useState(2);
   const [method, setMethod] = useState<PaymentMethods | null>(PaymentMethods.Crypto);
+  const [selectedCrypto, setSelectedCrypto] = useState<PaymentOption | null>(null);
 
   const {
     data: paymentRequest,
@@ -114,6 +116,14 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
     setActiveStep((prev) => prev - 1);
   };
 
+  const handleSelectCrypto = (index: number, list?: PaymentOption[]) => () => {
+    if (!list) return;
+
+    if (list[index].currencyTitle === selectedCrypto?.currencyTitle) {
+      setSelectedCrypto(null);
+    } else setSelectedCrypto(list[index]);
+  };
+
   const renderCryptoSteps = (step: number) => {
     if (hasError) {
       return (
@@ -128,7 +138,15 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
 
     switch (step) {
       case 2:
-        return <ConnectWallet onClose={handleBackStep} onNext={handleNextStep} token={token} />;
+        return (
+          <ConnectWallet
+            onClose={handleBackStep}
+            onNext={handleNextStep}
+            onSelect={handleSelectCrypto}
+            selectedCrypto={selectedCrypto}
+            token={token}
+          />
+        );
       case 3:
         return (
           <OrderSummary
@@ -148,6 +166,7 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
             onNext={handleNextStep}
             onBack={handleBackToFirstStep}
             onReset={reset}
+            selectedCrypto={selectedCrypto}
             address={details?.data.address}
             currencyName={details?.data.currencyName}
             amount={details?.data.amount}

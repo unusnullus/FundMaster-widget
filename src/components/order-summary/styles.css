@@ -6,12 +6,6 @@
   gap: 32px;
 }
 
-.step-title {
-  font-size: 22px;
-  font-weight: 500;
-  margin: 0;
-}
-
 .total-container {
   display: flex;
   justify-content: space-between;
@@ -23,8 +17,15 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  height: 109px;
+  height: 200px;
   width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.loader-container {
+  display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
 }

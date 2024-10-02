@@ -49,7 +49,11 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
       <style>{styles.toString()}</style>
       <p className="step-title">Order summary</p>
       <div className="details-container">
-        {(isLoading || !amount) && <div className="loader" />}
+        {(isLoading || !amount) && (
+          <div className="loader-container">
+            <div className="loader" />
+          </div>
+        )}
         {!isLoading && amount && (
           <>
             <div className="items-list">

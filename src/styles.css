@@ -78,3 +78,18 @@
     font-weight: 500;
   }
 }
+
+@media (max-width: 768px) {
+  .widget-container {
+    max-width: 360px;
+  }
+
+  .step-container {
+    max-width: 360px;
+    gap: 16px;
+  }
+
+  .step-title {
+    font-size: 20px;
+  }
+}
