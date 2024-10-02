@@ -1,6 +1,12 @@
 FROM node:22.4-alpine3.19 as builder
 ARG build_script
+ARG merchant_api
+ARG api_key
+ARG secret_key
 ENV BUILD_SCRIPT=${build_script} \
+    MERCHANT_API=${merchant_api} \
+    API_KEY=${api_key} \
+    SECRET_KEY=${secret_key} \
     BUILD_DIR=dist
 
 WORKDIR /build/src
