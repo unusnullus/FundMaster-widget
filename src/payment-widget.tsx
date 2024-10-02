@@ -1,15 +1,16 @@
 import { useEffect, useState } from "preact/hooks";
-import Stepper from "./components/stepper";
-import styles from "./styles.css";
 import { PaymentMethods, STATUSES } from "./constants/enums";
 import { PAYMENT_METHOD_STEPS } from "./constants/constants";
+import Stepper from "./components/stepper";
 import OrderSummary from "./components/order-summary";
 import PaymentStatus from "./components/payment-status";
 import ConnectWallet from "./components/connect-wallet";
 import CryptoPay from "./components/crypto-pay";
+import Button from "./components/button";
 import { usePaymentRequest } from "./services/merchant/use-payment-request";
 import { useCancelPaymentRequest } from "./services/merchant/use-cancel-payment-request";
 import { usePaymentDetails } from "./services/customer/use-payment-details";
+import styles from "./styles.css";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -26,6 +27,7 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
   const {
     data: paymentRequest,
     mutate: createPaymentRequest,
+    isError: isPaymentRequestError,
     reset,
   } = usePaymentRequest(
     {
@@ -42,30 +44,12 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
   const token = paymentRequest?.data.customerToken ?? "";
   const requestId = paymentRequest?.data.paymentRequest.id;
 
-  const { data: details, isLoading: isDetailsLoading } = usePaymentDetails(token, activeStep);
+  const { data: details, isLoading: isDetailsLoading, isError: isDetailsError } = usePaymentDetails(token, activeStep);
   const status = details?.data.status;
-  const { mutate } = useCancelPaymentRequest();
 
-  const handleClose = () => {
-    if (requestId) {
-      mutate(requestId);
-    } else {
-      abortController.abort();
-    }
+  const { mutate, isError: isCancelPaymentError } = useCancelPaymentRequest();
 
-    onClose();
-  };
-
-  const handleNextStep = () => {
-    setActiveStep((prev) => prev + 1);
-  };
-
-  const handleBackToFirstStep = () => {
-    setActiveStep(2);
-    setMethod(PaymentMethods.Crypto);
-    mutate(requestId);
-    createPaymentRequest();
-  };
+  const hasError = isPaymentRequestError || isDetailsError || isCancelPaymentError;
 
   useEffect(() => {
     if (status === STATUSES.Paid) {
@@ -100,9 +84,26 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
     };
   }, [requestId]);
 
-  useEffect(() => {
+  const handleClose = () => {
+    if (requestId) {
+      mutate(requestId);
+    } else {
+      abortController.abort();
+    }
+
+    onClose();
+  };
+
+  const handleNextStep = () => {
+    setActiveStep((prev) => prev + 1);
+  };
+
+  const handleBackToFirstStep = () => {
     setActiveStep(2);
-  }, []);
+    setMethod(PaymentMethods.Crypto);
+    mutate(requestId);
+    createPaymentRequest();
+  };
 
   const handleBackStep = () => {
     if (activeStep === 2) {
@@ -114,6 +115,17 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
   };
 
   const renderCryptoSteps = (step: number) => {
+    if (hasError) {
+      return (
+        <div className="error-container">
+          <div className="text">An error occurred during the payment process.</div>
+          <Button variant="secondary" onClick={handleClose}>
+            Back to merchant
+          </Button>
+        </div>
+      );
+    }
+
     switch (step) {
       case 2:
         return <ConnectWallet onClose={handleBackStep} onNext={handleNextStep} token={token} />;
@@ -151,7 +163,7 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
   return (
     <div className="widget-container">
       <style>{styles.toString()}</style>
-      {method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
+      {!hasError && method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
         <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
       )}
       {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep)}
