@@ -35,8 +35,8 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
     [amount, currencyName]
   );
 
-  const handleCheckboxChange = (event: TargetedEvent<HTMLInputElement>) => {
-    setIsChecked(event.currentTarget.checked);
+  const handleCheckboxChange = () => {
+    setIsChecked((prev) => !prev);
     setError(false);
   };
 
@@ -84,13 +84,8 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
           </>
         )}
       </div>
-      <div className="terms-of-use-container">
-        <input
-          type="checkbox"
-          className={`checkbox ${error ? "error" : ""} `}
-          checked={isChecked}
-          onChange={handleCheckboxChange}
-        />
+      <div className="terms-of-use-container pointer" onClick={handleCheckboxChange}>
+        <input type="checkbox" className={`checkbox ${error ? "error" : ""} `} checked={isChecked} />
         <p>
           I confirm that I have read <span>Terms of Use</span>
         </p>
