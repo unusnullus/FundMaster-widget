@@ -2,10 +2,10 @@ import UsdtIcon from "../../assets/usdt.svg";
 import UsdcIcon from "../../assets/usdc.svg";
 import BitcoinIcon from "../../assets/bitcoin-token.svg";
 import EthereumIcon from "../../assets/ethereum-token.svg";
-import BSCBSCIcon from "../../assets/BSC.svg";
+import BNBBNBIcon from "../../assets/BSC.svg";
 import TRXTRXIcon from "../../assets/TRX.svg";
 import GXAGETHIcon from "../../assets/GXAG.svg";
-import USDTBSCIcon from "../../assets/USDT-bsc.svg";
+import USDTBNBIcon from "../../assets/USDT-bsc.svg";
 import USDTTRXIcon from "../../assets/USDT-trx.svg";
 
 
@@ -39,10 +39,10 @@ const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
   ETHETH: EthereumIcon,
   USDTETH: UsdtIcon,
   USDCETH: UsdcIcon,
-  BSCBSC: BSCBSCIcon,
+  BNBBNB: BNBBNBIcon,
   TRXTRX: TRXTRXIcon,
   GXAGETH: GXAGETHIcon,
-  USDTBSC: USDTBSCIcon,
+  USDTBNB: USDTBNBIcon,
   USDTTRX: USDTTRXIcon,
 };
 
