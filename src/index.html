@@ -92,7 +92,7 @@
 
         return function() {
           const uuid = uuids[index];
-          index = (index + 1) % uuids.length; // Переходим к следующему индексу по кругу
+          index = (index + 1) % uuids.length;
           return uuid;
         };
       }
