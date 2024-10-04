@@ -120,7 +120,7 @@
 
       document.getElementById("open-widget-voluntary").addEventListener("click", function () {
         const openWidgetEvent = new CustomEvent("open-widget", {
-          detail: { uid: "test1", operationId: "test1", title: "Item 1", description: "Item description" },
+          detail: { uid: getUUID(), operationId: generateUUID(), title: "Item 1", description: "Item description" },
         });
         window.dispatchEvent(openWidgetEvent);
       });

@@ -2,6 +2,13 @@ import UsdtIcon from "../../assets/usdt.svg";
 import UsdcIcon from "../../assets/usdc.svg";
 import BitcoinIcon from "../../assets/bitcoin-token.svg";
 import EthereumIcon from "../../assets/ethereum-token.svg";
+import BSCBSCIcon from "../../assets/BSC.svg";
+import TRXTRXIcon from "../../assets/TRX.svg";
+import GXAGETHIcon from "../../assets/GXAG.svg";
+import USDTBSCIcon from "../../assets/USDT-bsc.svg";
+import USDTTRXIcon from "../../assets/USDT-trx.svg";
+
+
 import MetamaskIcon from "../../assets/metamask.svg";
 import CoinbaseIcon from "../../assets/coinbase.svg";
 import BinanceIcon from "../../assets/binance.svg";
@@ -28,10 +35,15 @@ interface ConnectWalletProps {
 }
 
 const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
-  BTC: BitcoinIcon,
-  ETH: EthereumIcon,
-  USDT: UsdtIcon,
-  USDC: UsdcIcon,
+  BTCBTC: BitcoinIcon,
+  ETHETH: EthereumIcon,
+  USDTETH: UsdtIcon,
+  USDCETH: UsdcIcon,
+  BSCBSC: BSCBSCIcon,
+  TRXTRX: TRXTRXIcon,
+  GXAGETH: GXAGETHIcon,
+  USDTBSC: USDTBSCIcon,
+  USDTTRX: USDTTRXIcon,
 };
 
 // const WALLET_LIST = [
@@ -100,7 +112,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
       <style>{styles.toString()}</style>
 
       {/* {!open && (
-        <> 
+        <>
      {isConnected ? (
             <div className="crypto-item">
               <div className="item-data-container">
@@ -140,8 +152,8 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
             </div>
           )}
           {!isLoading &&
-            filteredCryptoList?.map(({ currencyTitle, currencyCode, amount }, index) => {
-              const Icon = CRYPTO_ICONS[currencyCode];
+            filteredCryptoList?.map(({ currencyTitle, currencyCode, amount, networkCode }, index) => {
+              const Icon = CRYPTO_ICONS[currencyCode+networkCode];
 
               return (
                 <div
@@ -150,7 +162,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
                   onClick={onSelect(index, cryptoList)}
                 >
                   <div className="item-data-container">
-                    {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}
+                    {CRYPTO_ICONS[currencyCode+networkCode] ? <Icon /> : <div className="token-logo" />}
                     <div className="item-data">
                       <span className="title">{currencyTitle}</span>
                       {amount && (
@@ -174,7 +186,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
         </Button>
       </div>
       {/* </>
-      )} 
+      )}
        {open && (
         <>
           <div className="connect-wallet-title">
