@@ -1,5 +1,5 @@
 import { FunctionalComponent } from "preact";
-import { useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import { JSXInternal } from "preact/src/jsx";
 import TargetedEvent = JSXInternal.TargetedEvent;
 
@@ -22,6 +22,7 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
   onNext,
   onClose,
   title,
+  description,
   amount,
   currencyName,
   isLoading,
@@ -29,13 +30,18 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState(false);
 
+  const formattedAmount = useMemo(
+    () => (amount ? `${formatNumber(amount, 6)} ${currencyName}` : ""),
+    [amount, currencyName]
+  );
+
   const handleCheckboxChange = (event: TargetedEvent<HTMLInputElement>) => {
     setIsChecked(event.currentTarget.checked);
     setError(false);
   };
 
   const handleContinue = () => {
-    if (isLoading || !amount) return;
+    if (isLoading || !currencyName) return;
 
     if (!isChecked) {
       setError(true);
@@ -49,26 +55,31 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
       <style>{styles.toString()}</style>
       <p className="step-title">Order summary</p>
       <div className="details-container">
-        {(isLoading || !amount) && (
+        {(isLoading || !currencyName) && (
           <div className="loader-container">
             <div className="loader" />
           </div>
         )}
-        {!isLoading && amount && (
+        {!isLoading && currencyName && (
           <>
             <div className="items-list">
               <div className="item-container">
-                <span>{title}</span>
-                <span>
-                  {formatNumber(amount, 6)} {currencyName}
-                </span>
+                <div className="title-container">
+                  <span className="title">{title}</span>
+                  {description && <span className="description">{description}</span>}
+                </div>
+                {formattedAmount && <span>{formattedAmount}</span>}
               </div>
             </div>
             <div className="total-container">
-              <span>Total</span>
-              <span>
-                {formatNumber(amount, 6)} {currencyName}
-              </span>
+              {formattedAmount ? (
+                <>
+                  <span>Total</span>
+                  <span>{formattedAmount}</span>
+                </>
+              ) : (
+                <span>You are making a voluntary payment.</span>
+              )}
             </div>
           </>
         )}

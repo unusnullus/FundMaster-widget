@@ -15,11 +15,23 @@ import { PaymentOption } from "types/merchant";
 
 interface PaymentDialogProps {
   onClose: () => void;
+  uid: string;
+  operationId: string;
   title?: string;
   description?: string;
+  baseAmount?: string;
+  baseCurrencyName?: string;
 }
 
-const PaymentWidget = ({ onClose, title = "Item 1", description = "Test description" }: PaymentDialogProps) => {
+const PaymentWidget = ({
+  onClose,
+  title,
+  description,
+  uid,
+  operationId,
+  baseAmount,
+  baseCurrencyName,
+}: PaymentDialogProps) => {
   const abortController = new AbortController();
 
   const [activeStep, setActiveStep] = useState(2);
@@ -33,12 +45,12 @@ const PaymentWidget = ({ onClose, title = "Item 1", description = "Test descript
     reset,
   } = usePaymentRequest(
     {
-      uid: "test12",
-      operationId: "test",
+      uid,
+      operationId,
       title,
       description,
-      baseAmount: "10",
-      baseCurrencyName: "USD",
+      baseAmount,
+      baseCurrencyName,
     },
     abortController.signal
   );

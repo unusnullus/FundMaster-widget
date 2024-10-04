@@ -1,4 +1,6 @@
-export interface EmbedProps {
+import { MerchantPaymentRequest } from "./merchant";
+
+export interface EmbedProps extends MerchantPaymentRequest {
   shadowRoot: ShadowRoot;
   fontFamily: string;
   onClose: () => void;
