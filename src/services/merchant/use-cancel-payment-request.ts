@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import MerchantService from "./merchant";
 
-export const useCancelPaymentRequest = () =>
+export const useCancelPaymentRequest = (onError: () => void) =>
   useMutation({
     mutationKey: ["cancel-merchant-payment-request"],
     mutationFn: (id?: number) => {
@@ -9,4 +9,5 @@ export const useCancelPaymentRequest = () =>
 
       return Promise.reject();
     },
+    onError,
   });

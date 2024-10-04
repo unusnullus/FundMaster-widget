@@ -19,6 +19,7 @@ interface ConnectWalletProps {
   onBack: () => void;
   onClose: () => void;
   onReset: () => void;
+  onError: () => void;
   address?: string;
   amount?: string;
   currencyName?: string;
@@ -29,9 +30,9 @@ interface ConnectWalletProps {
 
 const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   onClose,
-  onNext,
   onBack,
   onReset,
+  onError,
   address,
   amount,
   currencyName,
@@ -40,7 +41,7 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   selectedCrypto,
 }) => {
   const [isTimeOut, setIsTimeOut] = useState(false);
-  const { mutate } = useCancelPaymentRequest();
+  const { mutate } = useCancelPaymentRequest(onError);
   const { copyToClipboard } = useClipboard();
 
   const handleCopy =
@@ -51,8 +52,8 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
 
   const handleExpire = () => {
     setIsTimeOut(true);
-    onReset();
     mutate(requestId);
+    onReset();
   };
 
   const timeLeft = useCountdown(handleExpire, date);
@@ -71,7 +72,6 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   return (
     <div className="step-container">
       <style>{styles.toString()}</style>
-
       {!isTimeOut && (
         <>
           <div className="connect-wallet-title">

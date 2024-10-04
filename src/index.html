@@ -98,14 +98,15 @@
 
       document.getElementById("open-widget-voluntary").addEventListener("click", function () {
         const openWidgetEvent = new CustomEvent("open-widget", {
-          detail: { uid: "test", operationId: "test", title: "Item 1", description: "Item description" },
+          detail: { uid: "test1", operationId: "test1", title: "Item 1", description: "Item description" },
         });
         window.dispatchEvent(openWidgetEvent);
       });
-      // document.getElementById("open-widget-exeption").addEventListener("click", function () {
-      //   const openWidgetEvent = new CustomEvent("open-widget");
-      //   window.dispatchEvent(openWidgetEvent);
-      // });
+
+      document.getElementById("open-widget-exeption").addEventListener("click", function () {
+        const openWidgetEvent = new CustomEvent("open-widget");
+        window.dispatchEvent(openWidgetEvent);
+      });
     </script>
   </body>
 </html>

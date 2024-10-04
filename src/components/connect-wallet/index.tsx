@@ -5,13 +5,13 @@ import EthereumIcon from "../../assets/ethereum-token.svg";
 import MetamaskIcon from "../../assets/metamask.svg";
 import CoinbaseIcon from "../../assets/coinbase.svg";
 import BinanceIcon from "../../assets/binance.svg";
-import QrWalletIcon from "../../assets/qr-wallet.svg";
-import BackIcon from "../../assets/back.svg";
+// import QrWalletIcon from "../../assets/qr-wallet.svg";
+// import BackIcon from "../../assets/back.svg";
 import SearchIcon from "../../assets/search.svg";
 
 import styles from "./styles.css";
 import { FunctionalComponent } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import Button from "../button";
 import { usePaymentOptions } from "../../services/customer/use-payment-options";
 import { PaymentOption } from "../../types/merchant";
@@ -21,16 +21,10 @@ import { formatNumber } from "../../lib/format-number";
 interface ConnectWalletProps {
   onNext: () => void;
   onClose: () => void;
+  onError: () => void;
   onSelect: (index: number, list?: PaymentOption[]) => () => void;
   token: string;
   selectedCrypto: PaymentOption | null;
-}
-
-interface Token {
-  Icon: FunctionalComponent;
-  title: string;
-  value: number;
-  currency: string;
 }
 
 const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
@@ -40,45 +34,52 @@ const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
   USDC: UsdcIcon,
 };
 
-const WALLET_LIST = [
-  { Icon: MetamaskIcon, title: "Metamask", status: "Installed" },
-  { Icon: BinanceIcon, title: "Bitcoin", status: "" },
-  { Icon: CoinbaseIcon, title: "Ethereum", status: "" },
-];
+// const WALLET_LIST = [
+//   { Icon: MetamaskIcon, title: "Metamask", status: "Installed" },
+//   { Icon: BinanceIcon, title: "Bitcoin", status: "" },
+//   { Icon: CoinbaseIcon, title: "Ethereum", status: "" },
+// ];
 
 const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
   onClose,
   onNext,
   onSelect,
+  onError,
   selectedCrypto,
   token,
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [open, setOpen] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [cryptoSearch, setCryptoSearch] = useState("");
-  const [walletSearch, setWalletSearch] = useState("");
+  // const [walletSearch, setWalletSearch] = useState("");
 
-  const { data: paymentOptions, isLoading } = usePaymentOptions(token);
-  const { mutate } = usePayIn();
+  const { data: paymentOptions, isLoading, isError } = usePaymentOptions(token);
+  const { mutate } = usePayIn(onError);
+
+  useEffect(() => {
+    if (isError) {
+      onError();
+    }
+  }, [isError]);
 
   const cryptoList = paymentOptions?.data.paymentOptions;
 
-  const handleDisconnect = () => {
-    setIsConnected(false);
-  };
+  // const handleDisconnect = () => {
+  //   setIsConnected(false);
+  // };
 
-  const handleConnect = () => {
-    setIsConnected(true);
-    setOpen(false);
-  };
+  // const handleConnect = () => {
+  //   setIsConnected(true);
+  //   setOpen(false);
+  // };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  // const handleOpen = () => {
+  //   setOpen(true);
+  // };
 
   const handleNext = () => {
     if (!selectedCrypto) return;
@@ -90,17 +91,17 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
     crypto.currencyTitle.toLowerCase().includes(cryptoSearch.toLowerCase())
   );
 
-  const filteredWalletList = WALLET_LIST.filter((wallet) =>
-    wallet.title.toLowerCase().includes(walletSearch.toLowerCase())
-  );
+  // const filteredWalletList = WALLET_LIST.filter((wallet) =>
+  //   wallet.title.toLowerCase().includes(walletSearch.toLowerCase())
+  // );
 
   return (
     <div className="step-container">
       <style>{styles.toString()}</style>
 
-      {!open && (
-        <>
-          {/* {isConnected ? (
+      {/* {!open && (
+        <> 
+     {isConnected ? (
             <div className="crypto-item">
               <div className="item-data-container">
                 <MetamaskIcon />
@@ -121,58 +122,60 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
               </div>
             </Button>
           )} */}
-          <div className="search-container">
-            <p className="step-title">Supported crypto currencies</p>
-            <div className="search-input-container">
-              <SearchIcon color="info" />
-              <input
-                className="input"
-                placeholder="Search for currency"
-                value={cryptoSearch}
-                onChange={(e) => setCryptoSearch(e.currentTarget.value)}
-              />
+      <div className="search-container">
+        <p className="step-title">Supported crypto currencies</p>
+        <div className="search-input-container">
+          <SearchIcon color="info" />
+          <input
+            className="input"
+            placeholder="Search for currency"
+            value={cryptoSearch}
+            onChange={(e) => setCryptoSearch(e.currentTarget.value)}
+          />
+        </div>
+        <div className="list-container">
+          {isLoading && (
+            <div className="loader-container">
+              <div className="loader" />
             </div>
-            <div className="list-container">
-              {isLoading && <div className="loader" />}
-              {!isLoading &&
-                filteredCryptoList?.map(({ currencyTitle, currencyCode, amount }, index) => {
-                  const Icon = CRYPTO_ICONS[currencyCode];
+          )}
+          {!isLoading &&
+            filteredCryptoList?.map(({ currencyTitle, currencyCode, amount }, index) => {
+              const Icon = CRYPTO_ICONS[currencyCode];
 
-                  return (
-                    <div
-                      className={`crypto-item pointer ${
-                        selectedCrypto?.currencyTitle === currencyTitle ? "selected" : ""
-                      }`}
-                      key={index}
-                      onClick={onSelect(index, cryptoList)}
-                    >
-                      <div className="item-data-container">
-                        {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}
-                        <div className="item-data">
-                          <span className="title">{currencyTitle}</span>
-                          {amount && (
-                            <span>
-                              {formatNumber(amount, 6)} {currencyCode}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+              return (
+                <div
+                  className={`crypto-item pointer ${selectedCrypto?.currencyTitle === currencyTitle ? "selected" : ""}`}
+                  key={index}
+                  onClick={onSelect(index, cryptoList)}
+                >
+                  <div className="item-data-container">
+                    {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}
+                    <div className="item-data">
+                      <span className="title">{currencyTitle}</span>
+                      {amount && (
+                        <span>
+                          {formatNumber(amount, 6)} {currencyCode}
+                        </span>
+                      )}
                     </div>
-                  );
-                })}
-            </div>
-          </div>
-          <div className="footer-button-container">
-            <Button variant="secondary" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={handleNext}>
-              Continue
-            </Button>
-          </div>
-        </>
-      )}
-      {open && (
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </div>
+      <div className="footer-button-container">
+        <Button variant="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleNext}>
+          Continue
+        </Button>
+      </div>
+      {/* </>
+      )} 
+       {open && (
         <>
           <div className="connect-wallet-title">
             <p className="crypto-title">Connect your wallet</p>
@@ -213,7 +216,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
             </div>
           </div>
         </>
-      )}
+      )} */}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import { useCancelPaymentRequest } from "./services/merchant/use-cancel-payment-
 import { usePaymentDetails } from "./services/customer/use-payment-details";
 import styles from "./styles.css";
 import { PaymentOption } from "types/merchant";
+import CloseIcon from "./assets/close.svg";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -37,11 +38,15 @@ const PaymentWidget = ({
   const [activeStep, setActiveStep] = useState(2);
   const [method, setMethod] = useState<PaymentMethods | null>(PaymentMethods.Crypto);
   const [selectedCrypto, setSelectedCrypto] = useState<PaymentOption | null>(null);
+  const [error, setError] = useState(false);
+
+  const handleError = () => {
+    setError(true);
+  };
 
   const {
     data: paymentRequest,
     mutate: createPaymentRequest,
-    isError: isPaymentRequestError,
     reset,
   } = usePaymentRequest(
     {
@@ -52,7 +57,8 @@ const PaymentWidget = ({
       baseAmount,
       baseCurrencyName,
     },
-    abortController.signal
+    abortController.signal,
+    handleError
   );
 
   const token = paymentRequest?.data.customerToken ?? "";
@@ -61,9 +67,13 @@ const PaymentWidget = ({
   const { data: details, isLoading: isDetailsLoading, isError: isDetailsError } = usePaymentDetails(token, activeStep);
   const status = details?.data.status;
 
-  const { mutate, isError: isCancelPaymentError } = useCancelPaymentRequest();
+  const { mutate } = useCancelPaymentRequest(handleError);
 
-  const hasError = isPaymentRequestError || isDetailsError || isCancelPaymentError;
+  useEffect(() => {
+    if (isDetailsError) {
+      handleError();
+    }
+  }, [isDetailsError]);
 
   useEffect(() => {
     if (status === STATUSES.Paid) {
@@ -137,13 +147,22 @@ const PaymentWidget = ({
   };
 
   const renderCryptoSteps = (step: number) => {
-    if (hasError) {
+    if (error) {
       return (
         <div className="error-container">
-          <div className="text">An error occurred during the payment process.</div>
-          <Button variant="secondary" onClick={handleClose}>
-            Back to merchant
-          </Button>
+          <div className="text-container">
+            <div className="error">
+              <div className="circle">
+                <CloseIcon width="24" height="24" />
+              </div>
+            </div>
+            <div className="text">An error occurred during the payment process</div>
+          </div>
+          <div className="back-button">
+            <Button variant="secondary" onClick={handleClose}>
+              Back to merchant
+            </Button>
+          </div>
         </div>
       );
     }
@@ -155,6 +174,7 @@ const PaymentWidget = ({
             onClose={handleBackStep}
             onNext={handleNextStep}
             onSelect={handleSelectCrypto}
+            onError={handleError}
             selectedCrypto={selectedCrypto}
             token={token}
           />
@@ -178,6 +198,7 @@ const PaymentWidget = ({
             onNext={handleNextStep}
             onBack={handleBackToFirstStep}
             onReset={reset}
+            onError={handleError}
             selectedCrypto={selectedCrypto}
             address={details?.data.address}
             currencyName={details?.data.currencyName}
@@ -194,7 +215,7 @@ const PaymentWidget = ({
   return (
     <div className="widget-container">
       <style>{styles.toString()}</style>
-      {!hasError && method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
+      {!error && method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
         <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
       )}
       {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep)}
