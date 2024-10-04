@@ -85,13 +85,15 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
             </div>
           )}
           <div className="qr-code-container">{address && <QRcode value={address} size={140} />}</div>
-          <div className="pay-field">
-            <span className="input-title">Amount to pay</span>
-            <div className="pay-data-container">
-              <span>{formattedAmount}</span>
-              <CopyIcon className="pointer" onClick={handleCopy(formattedAmount)} />
+          {formattedAmount && (
+            <div className="pay-field">
+              <span className="input-title">Amount to pay</span>
+              <div className="pay-data-container">
+                <span>{formattedAmount}</span>
+                <CopyIcon className="pointer" onClick={handleCopy(formattedAmount)} />
+              </div>
             </div>
-          </div>
+          )}
           <div className="pay-field">
             <span className="input-title">Pay to this address</span>
             <div className="pay-data-container">

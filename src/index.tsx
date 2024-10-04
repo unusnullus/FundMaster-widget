@@ -4,16 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PaymentWidget from "./payment-widget";
 import { EmbedProps, RootProps } from "./types/types";
 import { AppContainer, GlobalStyle } from "./styles";
+import { MerchantPaymentRequest } from "types/merchant";
 
 const queryClient = new QueryClient();
 
-const PaymentWidgetRoot = ({ shadowRoot, fontFamily, onClose }: EmbedProps) => {
+const PaymentWidgetRoot = ({ shadowRoot, fontFamily, onClose, ...paymentData }: EmbedProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalStyle />
       <StyleSheetManager target={shadowRoot as unknown as HTMLElement}>
         <AppContainer fontFamily={fontFamily}>
-          <PaymentWidget onClose={onClose} />
+          <PaymentWidget onClose={onClose} {...paymentData} />
         </AppContainer>
       </StyleSheetManager>
     </QueryClientProvider>
@@ -33,7 +34,7 @@ export const init = ({ rootId, fontFamily }: RootProps) => {
     }
   };
 
-  const openWidget = () => {
+  const openWidget = (data: MerchantPaymentRequest) => {
     if (!appRoot.shadowRoot) {
       appRoot.attachShadow({
         mode: "open",
@@ -45,13 +46,15 @@ export const init = ({ rootId, fontFamily }: RootProps) => {
       existingStyles.forEach((style) => style.remove());
 
       render(
-        <PaymentWidgetRoot shadowRoot={appRoot.shadowRoot} fontFamily={fontFamily} onClose={closeWidget} />,
+        <PaymentWidgetRoot shadowRoot={appRoot.shadowRoot} fontFamily={fontFamily} onClose={closeWidget} {...data} />,
         appRoot.shadowRoot
       );
     }
   };
 
-  window.addEventListener("open-widget", () => {
-    openWidget();
+  window.addEventListener("open-widget", (event: Event) => {
+    const data = (event as CustomEvent).detail as MerchantPaymentRequest;
+
+    openWidget(data);
   });
 };

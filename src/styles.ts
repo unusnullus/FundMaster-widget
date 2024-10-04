@@ -41,6 +41,7 @@ export const AppContainer = styled.div<AppContainerProps>`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1400;
   background-color: rgba(0, 0, 0, 0.5);
   & {
     * {

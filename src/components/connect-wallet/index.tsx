@@ -150,9 +150,11 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
                         {CRYPTO_ICONS[currencyCode] ? <Icon /> : <div className="token-logo" />}
                         <div className="item-data">
                           <span className="title">{currencyTitle}</span>
-                          <span>
-                            {formatNumber(amount, 6)} {currencyCode}
-                          </span>
+                          {amount && (
+                            <span>
+                              {formatNumber(amount, 6)} {currencyCode}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
