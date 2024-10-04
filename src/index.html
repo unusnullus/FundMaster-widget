@@ -77,6 +77,15 @@
 
     <script src="./payment-widget.js" type="text/javascript"></script>
     <script type="text/javascript">
+
+      function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0,
+                  v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+
       PaymentWidget.init({
         rootId: "payment-widget-container",
         fontFamily: "'Inter', sans-serif;",
@@ -85,8 +94,8 @@
       document.getElementById("open-widget-button").addEventListener("click", function () {
         const openWidgetEvent = new CustomEvent("open-widget", {
           detail: {
-            uid: "test",
-            operationId: "test",
+            uid: generateUUID(),
+            operationId: generateUUID(),
             title: "Item 1",
             description: "Item description",
             baseAmount: "10",
