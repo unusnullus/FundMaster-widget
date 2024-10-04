@@ -80,11 +80,24 @@
 
       function generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random() * 16 | 0,
+          const r = Math.random() * 16 | 0,
                   v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
       }
+
+      function createUUIDCycle() {
+        const uuids = [generateUUID(), generateUUID(), generateUUID()];
+        let index = 0;
+
+        return function() {
+          const uuid = uuids[index];
+          index = (index + 1) % uuids.length; // Переходим к следующему индексу по кругу
+          return uuid;
+        };
+      }
+
+      const getUUID = createUUIDCycle();
 
       PaymentWidget.init({
         rootId: "payment-widget-container",
@@ -94,7 +107,7 @@
       document.getElementById("open-widget-button").addEventListener("click", function () {
         const openWidgetEvent = new CustomEvent("open-widget", {
           detail: {
-            uid: generateUUID(),
+            uid: getUUID(),
             operationId: generateUUID(),
             title: "Item 1",
             description: "Item description",
