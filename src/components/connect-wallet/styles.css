@@ -24,18 +24,18 @@
 }
 
 .list-container::-webkit-scrollbar {
-  background-color: #fff;
+  background-color: var(--widget-background-color);
   width: 16px;
 }
 
 .list-container::-webkit-scrollbar-track {
-  background-color: #fff;
+  background-color: var(--widget-background-color);
 }
 
 .list-container::-webkit-scrollbar-thumb {
   background-color: #babac0;
   border-radius: 16px;
-  border: 4px solid #fff;
+  border: 4px solid var(--widget-background-color);
 }
 
 .list-container::-webkit-scrollbar-button {
@@ -77,7 +77,7 @@
   color: var(--widget-grey);
 
   span.title {
-    color: black;
+    color: var(--widget-text-color);
     font-size: 18px;
     font-weight: 500;
     line-height: normal;
@@ -101,6 +101,7 @@
   outline: none;
   background: none;
   font-family: Inter;
+  color: var(--widget-text-color);
 }
 
 .disconnect-button {

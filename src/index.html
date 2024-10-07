@@ -11,6 +11,7 @@
       html,
       body {
         height: 100%;
+        margin: 0;
       }
 
       .buttons {
@@ -73,15 +74,15 @@
       <button id="open-widget-button" class="button">Buy $10</button>
       <button id="open-widget-voluntary" class="button">Voluntary payment</button>
       <button id="open-widget-exeption" class="button">Buy (exeption)</button>
+      <button id="theme-toggle" class="button">Dark mode</button>
     </div>
 
     <script src="./payment-widget.js" type="text/javascript"></script>
     <script type="text/javascript">
-
       function generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          const r = Math.random() * 16 | 0,
-                  v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0,
+            v = c === "x" ? r : (r & 0x3) | 0x8;
           return v.toString(16);
         });
       }
@@ -90,7 +91,7 @@
         const uuids = [generateUUID(), generateUUID(), generateUUID()];
         let index = 0;
 
-        return function() {
+        return function () {
           const uuid = uuids[index];
           index = (index + 1) % uuids.length;
           return uuid;
@@ -102,6 +103,23 @@
       PaymentWidget.init({
         rootId: "payment-widget-container",
         fontFamily: "'Inter', sans-serif;",
+      });
+
+      const themeToggleButton = document.getElementById("theme-toggle");
+      let isDarkMode = false;
+
+      const updateTheme = () => {
+        const appRoot = document.querySelector("#payment-widget-container");
+        if (appRoot) {
+          const theme = isDarkMode ? "dark" : "light";
+          appRoot.setAttribute("data-theme", theme);
+          themeToggleButton.textContent = isDarkMode ? "Light mode" : "Dark mode";
+        }
+      };
+
+      themeToggleButton.addEventListener("click", () => {
+        isDarkMode = !isDarkMode;
+        updateTheme();
       });
 
       document.getElementById("open-widget-button").addEventListener("click", function () {

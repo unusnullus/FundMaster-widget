@@ -28,5 +28,4 @@
 
 .secondary-button:hover {
   border: 1px solid var(--widget-blue);
-  background: var(--widget-light-blue);
 }
