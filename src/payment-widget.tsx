@@ -72,6 +72,10 @@ const PaymentWidget = ({
   const { mutate } = useCancelPaymentRequest(handleError);
 
   useEffect(() => {
+    if (!baseAmount) setMethod(PaymentMethods.Crypto);
+  }, [baseAmount]);
+
+  useEffect(() => {
     if (isDetailsError) {
       handleError();
     }
