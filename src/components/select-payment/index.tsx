@@ -2,10 +2,10 @@ import type { FunctionalComponent } from "preact";
 import Button from "../button";
 import VisaIcon from "../../assets/visa.svg";
 import MasterIcon from "../../assets/master.svg";
-import UnionPayIcon from "../../assets/union-pay.svg";
-import AmexIcon from "../../assets/amex.svg";
-import GoogleIcon from "../../assets/google.svg";
-import AppleIcon from "../../assets/apple.svg";
+// import UnionPayIcon from "../../assets/union-pay.svg";
+// import AmexIcon from "../../assets/amex.svg";
+// import GoogleIcon from "../../assets/google.svg";
+// import AppleIcon from "../../assets/apple.svg";
 import BitcoinIcon from "../../assets/bitcoin.svg";
 import EthereumIcon from "../../assets/ethereum.svg";
 import styles from "./styles.css";
@@ -26,8 +26,6 @@ const SelectPayment: FunctionalComponent<SelectPaymentProps> = ({ onClose, onCli
           <div className="logo-container">
             <VisaIcon />
             <MasterIcon />
-            <UnionPayIcon />
-            <AmexIcon />
           </div>
           <div>Credit or debit card</div>
         </div>

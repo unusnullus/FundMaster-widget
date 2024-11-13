@@ -20,6 +20,7 @@ export interface PaymentRequest {
   uid: string;
   userId: number;
   amount: string;
+  baseAmount: string;
   title?: string;
   description?: string;
   exchangeRate: string;
