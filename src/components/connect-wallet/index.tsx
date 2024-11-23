@@ -162,7 +162,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
                   onClick={onSelect(index, cryptoList)}
                 >
                   <div className="item-data-container">
-                    {CRYPTO_ICONS[currencyCode+networkCode] ? <Icon /> : <div className="token-logo" />}
+                    {CRYPTO_ICONS[currencyCode+networkCode] ? <Icon /> : <div className={`token-logo ${currencyCode+networkCode}`} />}
                     <div className="item-data">
                       <span className="title">{currencyTitle}</span>
                       {amount && (
