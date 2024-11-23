@@ -35,15 +35,15 @@ interface ConnectWalletProps {
 }
 
 const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
-  BTCBTC: BitcoinIcon,
-  ETHETH: EthereumIcon,
-  USDTETH: UsdtIcon,
-  USDCETH: UsdcIcon,
-  BNBBNB: BNBBNBIcon,
-  TRXTRX: TRXTRXIcon,
-  GXAGETH: GXAGETHIcon,
-  USDTBNB: USDTBNBIcon,
-  USDTTRX: USDTTRXIcon,
+  "BTCBTC_TEST": BitcoinIcon,
+  "ETHETH_SEPOLIA": EthereumIcon,
+  "USDTETH_SEPOLIA": UsdtIcon,
+  "USDCETH_SEPOLIA": UsdcIcon,
+  "BNBBNB_TEST": BNBBNBIcon,
+  "TRXTRX_TEST": TRXTRXIcon,
+  "GXAGETH_SEPOLIA": GXAGETHIcon,
+  "USDTBNB_TEST": USDTBNBIcon,
+  "USDTTRX_TEST": USDTTRXIcon,
 };
 
 // const WALLET_LIST = [
