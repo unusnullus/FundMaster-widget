@@ -13,6 +13,8 @@ import { usePaymentDetails } from "./services/customer/use-payment-details";
 import styles from "./styles.css";
 import { PaymentOption } from "types/merchant";
 import CloseIcon from "./assets/close.svg";
+import SelectPayment from "./components/select-payment";
+import CardDetails from "./components/card-details";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -36,7 +38,7 @@ const PaymentWidget = ({
   const abortController = new AbortController();
 
   const [activeStep, setActiveStep] = useState(2);
-  const [method, setMethod] = useState<PaymentMethods | null>(PaymentMethods.Crypto);
+  const [method, setMethod] = useState<PaymentMethods | null>(null);
   const [selectedCrypto, setSelectedCrypto] = useState<PaymentOption | null>(null);
   const [error, setError] = useState(false);
 
@@ -68,6 +70,10 @@ const PaymentWidget = ({
   const status = details?.data.status;
 
   const { mutate } = useCancelPaymentRequest(handleError);
+
+  useEffect(() => {
+    if (!baseAmount) setMethod(PaymentMethods.Crypto);
+  }, [baseAmount]);
 
   useEffect(() => {
     if (isDetailsError) {
@@ -127,6 +133,10 @@ const PaymentWidget = ({
     setMethod(PaymentMethods.Crypto);
     mutate(requestId);
     createPaymentRequest();
+  };
+
+  const handleSelectPayment = (value: PaymentMethods) => () => {
+    setMethod(value);
   };
 
   const handleBackStep = () => {
@@ -212,13 +222,36 @@ const PaymentWidget = ({
     }
   };
 
+  const renderCardSteps = (step: number) => {
+    switch (step) {
+      case 2:
+        return <CardDetails onClose={handleBackStep} onNext={handleNextStep} />;
+      case 3:
+        return (
+          <OrderSummary
+            title={details?.data.title}
+            description={details?.data.description}
+            currencyName={details?.data.currencyName || details?.data.baseCurrencyName}
+            amount={details?.data.amount || details?.data.baseAmount}
+            isLoading={isDetailsLoading}
+            onClose={handleBackStep}
+            onNext={handleNextStep}
+          />
+        );
+      case 4:
+        return <PaymentStatus onClose={handleClose} />;
+    }
+  };
+
   return (
     <div className="widget-container">
       <style>{styles.toString()}</style>
       {!error && method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
         <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
       )}
+      {!method && <SelectPayment onClick={handleSelectPayment} onClose={handleClose} />}
       {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep)}
+      {method === PaymentMethods.Card && renderCardSteps(activeStep)}
     </div>
   );
 };
