@@ -131,6 +131,7 @@
             description: "Item description",
             baseAmount: "10",
             baseCurrencyName: "USD",
+            redirectUrl: window.location.href,
           },
         });
         window.dispatchEvent(openWidgetEvent);
@@ -138,7 +139,13 @@
 
       document.getElementById("open-widget-voluntary").addEventListener("click", function () {
         const openWidgetEvent = new CustomEvent("open-widget", {
-          detail: { uid: getUUID(), operationId: generateUUID(), title: "Item 1", description: "Item description" },
+          detail: {
+            uid: getUUID(),
+            operationId: generateUUID(),
+            title: "Item 1",
+            description: "Item description",
+            redirectUrl: window.location.href,
+          },
         });
         window.dispatchEvent(openWidgetEvent);
       });

@@ -1,3 +1,5 @@
+import EurIcon from "../../assets/EUR.svg";
+import UsdIcon from "../../assets/USD.svg";
 import UsdtIcon from "../../assets/usdt.svg";
 import UsdcIcon from "../../assets/usdc.svg";
 import BitcoinIcon from "../../assets/bitcoin-token.svg";
@@ -7,34 +9,33 @@ import TRXTRXIcon from "../../assets/TRX.svg";
 import GXAGETHIcon from "../../assets/GXAG.svg";
 import USDTBNBIcon from "../../assets/USDT-bsc.svg";
 import USDTTRXIcon from "../../assets/USDT-trx.svg";
-
-
-import MetamaskIcon from "../../assets/metamask.svg";
-import CoinbaseIcon from "../../assets/coinbase.svg";
-import BinanceIcon from "../../assets/binance.svg";
 // import QrWalletIcon from "../../assets/qr-wallet.svg";
 // import BackIcon from "../../assets/back.svg";
 import SearchIcon from "../../assets/search.svg";
 
 import styles from "./styles.css";
-import { FunctionalComponent } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import {FunctionalComponent} from "preact";
+import {useEffect, useState} from "preact/hooks";
 import Button from "../button";
-import { usePaymentOptions } from "../../services/customer/use-payment-options";
-import { PaymentOption } from "../../types/merchant";
-import { usePayIn } from "../../services/customer/use-pay-in";
-import { formatNumber } from "../../lib/format-number";
+import {usePaymentOptions} from "../../services/customer/use-payment-options";
+import {PaymentOption} from "../../types/merchant";
+import {usePayIn} from "../../services/customer/use-pay-in";
+import {formatNumber} from "../../lib/format-number";
+import {PaymentMethods} from "../../constants/enums";
 
 interface ConnectWalletProps {
   onNext: () => void;
   onClose: () => void;
   onError: () => void;
-  onSelect: (index: number, list?: PaymentOption[]) => () => void;
+  method: PaymentMethods;
+  onSelect: (paymentOption: PaymentOption) => () => void;
   token: string;
   selectedCrypto: PaymentOption | null;
 }
 
 const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
+  "USDFIAT": UsdIcon,
+  "EURFIAT": EurIcon,
   "BTCBTC_TEST": BitcoinIcon,
   "ETHETH_SEPOLIA": EthereumIcon,
   "USDTETH_SEPOLIA": UsdtIcon,
@@ -57,6 +58,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
   onNext,
   onSelect,
   onError,
+  method,
   selectedCrypto,
   token,
 }) => {
@@ -152,14 +154,15 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
             </div>
           )}
           {!isLoading &&
-            filteredCryptoList?.map(({ currencyTitle, currencyCode, amount, networkCode }, index) => {
+            filteredCryptoList?.filter(f=> (method === PaymentMethods.Crypto && !f.isFiat) || (method === PaymentMethods.Card && f.isFiat)).map((p, index) => {
+              const { currencyTitle, currencyCode, amount, networkCode } = p;
               const Icon = CRYPTO_ICONS[currencyCode+networkCode];
 
               return (
                 <div
                   className={`crypto-item pointer ${selectedCrypto?.currencyTitle === currencyTitle ? "selected" : ""}`}
                   key={index}
-                  onClick={onSelect(index, cryptoList)}
+                  onClick={onSelect(p)}
                 >
                   <div className="item-data-container">
                     {CRYPTO_ICONS[currencyCode+networkCode] ? <Icon /> : <div className={`token-logo ${currencyCode+networkCode}`} />}

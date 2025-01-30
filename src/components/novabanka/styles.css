@@ -1,0 +1,80 @@
+.timer {
+  display: flex;
+  padding: 10px 16px;
+  width: 75px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--widget-blue);
+  color: var(--widget-blue);
+  border-radius: 6px;
+}
+
+.input-title {
+  color: var(--widget-grey);
+}
+
+.network-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pay-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pay-data-container {
+  display: flex;
+  height: 62px;
+  padding: 12px;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--widget-grey-light);
+}
+
+.fail {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.connect-wallet-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .qr-code-container {
+    svg {
+      width: 90px;
+      height: 90px;
+    }
+  }
+
+  .pay-field {
+    gap: 8px;
+  }
+
+  .pay-data-container {
+    span {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+  }
+}

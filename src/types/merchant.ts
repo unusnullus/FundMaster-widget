@@ -7,6 +7,7 @@ export interface MerchantPaymentRequest {
   baseAmount?: string;
   title?: string;
   description?: string;
+  redirectUrl: string;
 }
 
 export interface PaymentRequest {
@@ -14,6 +15,7 @@ export interface PaymentRequest {
   address: string;
   baseCurrencyName: string;
   currencyName: string;
+  externalPaymentUrl: string;
   expirationDate: string;
   operationId: string;
   status: STATUSES;
@@ -36,6 +38,7 @@ export interface PaymentOption {
   currencyTitle: string;
   networkCode: string;
   amount: string;
+  isFiat: boolean;
 }
 
 export interface CustomerOptionsResponse {

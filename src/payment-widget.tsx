@@ -15,6 +15,7 @@ import { PaymentOption } from "types/merchant";
 import CloseIcon from "./assets/close.svg";
 import SelectPayment from "./components/select-payment";
 import CardDetails from "./components/card-details";
+import NovaBanka from "./components/novabanka";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -24,6 +25,7 @@ interface PaymentDialogProps {
   description?: string;
   baseAmount?: string;
   baseCurrencyName?: string;
+  redirectUrl: string,
 }
 
 const PaymentWidget = ({
@@ -33,6 +35,7 @@ const PaymentWidget = ({
   uid,
   operationId,
   baseAmount,
+  redirectUrl,
   baseCurrencyName,
 }: PaymentDialogProps) => {
   const abortController = new AbortController();
@@ -58,6 +61,7 @@ const PaymentWidget = ({
       description,
       baseAmount,
       baseCurrencyName,
+      redirectUrl,
     },
     abortController.signal,
     handleError
@@ -148,15 +152,17 @@ const PaymentWidget = ({
     setActiveStep((prev) => prev - 1);
   };
 
-  const handleSelectCrypto = (index: number, list?: PaymentOption[]) => () => {
-    if (!list) return;
+  const handleSelectCrypto = (paymentOption: PaymentOption) => () => {
+    if (!paymentOption) return;
 
-    if (list[index].currencyTitle === selectedCrypto?.currencyTitle) {
+    if (paymentOption.currencyTitle === selectedCrypto?.currencyTitle) {
       setSelectedCrypto(null);
-    } else setSelectedCrypto(list[index]);
+    } else {
+      setSelectedCrypto(paymentOption);
+    }
   };
 
-  const renderCryptoSteps = (step: number) => {
+  const renderCryptoSteps = (step: number, method: PaymentMethods) => {
     if (error) {
       return (
         <div className="error-container">
@@ -187,6 +193,7 @@ const PaymentWidget = ({
             onError={handleError}
             selectedCrypto={selectedCrypto}
             token={token}
+            method={method}
           />
         );
       case 3:
@@ -202,7 +209,7 @@ const PaymentWidget = ({
           />
         );
       case 4:
-        return (
+        return !selectedCrypto?.isFiat ? (
           <CryptoPay
             onClose={handleClose}
             onNext={handleNextStep}
@@ -216,7 +223,15 @@ const PaymentWidget = ({
             date={details?.data.expirationDate}
             requestId={requestId}
           />
-        );
+        ) : <NovaBanka
+          onClose={handleClose}
+          onNext={handleNextStep}
+          onBack={handleBackToFirstStep}
+          onReset={reset}
+          onError={handleError}
+          selectedCrypto={selectedCrypto}
+          paymentRequest={details?.data}
+        />;
       case 5:
         return <PaymentStatus onClose={handleClose} />;
     }
@@ -250,8 +265,9 @@ const PaymentWidget = ({
         <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
       )}
       {!method && <SelectPayment onClick={handleSelectPayment} onClose={handleClose} />}
-      {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep)}
-      {method === PaymentMethods.Card && renderCardSteps(activeStep)}
+      {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep, method)}
+      {method === PaymentMethods.Card && renderCryptoSteps(activeStep, method)}
+      {/*{method === PaymentMethods.Card && renderCardSteps(activeStep, method)}*/}
     </div>
   );
 };
