@@ -61,7 +61,9 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   const formattedTime = useMemo(() => {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   }, [timeLeft]);
 
   const formattedAmount = useMemo(
@@ -84,13 +86,18 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
               <span>{selectedCrypto.currencyTitle}</span>
             </div>
           )}
-          <div className="qr-code-container">{address && <QRcode value={address} size={140} />}</div>
+          <div className="qr-code-container">
+            {address && <QRcode value={address} size={140} />}
+          </div>
           {formattedAmount && (
             <div className="pay-field">
               <span className="input-title">Amount to pay</span>
               <div className="pay-data-container">
                 <span>{formattedAmount}</span>
-                <CopyIcon className="pointer" onClick={handleCopy(formattedAmount)} />
+                <CopyIcon
+                  className="pointer"
+                  onClick={handleCopy(formattedAmount)}
+                />
               </div>
             </div>
           )}
@@ -101,6 +108,7 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
               <CopyIcon className="pointer" onClick={handleCopy(address)} />
             </div>
           </div>
+          //todo add back button
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>

@@ -66,7 +66,9 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
               <div className="item-container">
                 <div className="title-container">
                   <span className="title">{title}</span>
-                  {description && <span className="description">{description}</span>}
+                  {description && (
+                    <span className="description">{description}</span>
+                  )}
                 </div>
                 {formattedAmount && <span>{formattedAmount}</span>}
               </div>
@@ -84,17 +86,28 @@ const OrderSummary: FunctionalComponent<SelectPaymentProps> = ({
           </>
         )}
       </div>
-      <div className="terms-of-use-container pointer" onClick={handleCheckboxChange}>
-        <input type="checkbox" className={`checkbox ${error ? "error" : ""} `} checked={isChecked} />
+      <div
+        className="terms-of-use-container pointer"
+        onClick={handleCheckboxChange}
+      >
+        <input
+          type="checkbox"
+          className={`checkbox ${error ? "error" : ""} `}
+          checked={isChecked}
+        />
         <p>
           I confirm that I have read <span>Terms of Use</span>
         </p>
       </div>
       <div className="footer-button-container">
         <Button variant="secondary" onClick={onClose}>
-          Cancel
+          Back
         </Button>
-        <Button variant="primary" onClick={handleContinue}>
+        <Button
+          disabled={!isChecked || isLoading || !currencyName}
+          variant="primary"
+          onClick={handleContinue}
+        >
           Continue
         </Button>
       </div>

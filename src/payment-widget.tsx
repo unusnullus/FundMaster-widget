@@ -16,6 +16,7 @@ import CloseIcon from "./assets/close.svg";
 import SelectPayment from "./components/select-payment";
 import CardDetails from "./components/card-details";
 import NovaBanka from "./components/novabanka";
+import PaymentStatusWaiting from "./components/payment-status-waiting";
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -25,7 +26,7 @@ interface PaymentDialogProps {
   description?: string;
   baseAmount?: string;
   baseCurrencyName?: string;
-  redirectUrl: string,
+  redirectUrl: string;
 }
 
 const PaymentWidget = ({
@@ -42,7 +43,9 @@ const PaymentWidget = ({
 
   const [activeStep, setActiveStep] = useState(2);
   const [method, setMethod] = useState<PaymentMethods | null>(null);
-  const [selectedCrypto, setSelectedCrypto] = useState<PaymentOption | null>(null);
+  const [selectedCrypto, setSelectedCrypto] = useState<PaymentOption | null>(
+    null
+  );
   const [error, setError] = useState(false);
 
   const handleError = () => {
@@ -70,7 +73,11 @@ const PaymentWidget = ({
   const token = paymentRequest?.data.customerToken ?? "";
   const requestId = paymentRequest?.data.paymentRequest.id;
 
-  const { data: details, isLoading: isDetailsLoading, isError: isDetailsError } = usePaymentDetails(token, activeStep);
+  const {
+    data: details,
+    isFetching: isDetailsLoading,
+    isError: isDetailsError,
+  } = usePaymentDetails(token, activeStep);
   const status = details?.data.status;
 
   const { mutate } = useCancelPaymentRequest(handleError);
@@ -88,6 +95,9 @@ const PaymentWidget = ({
   useEffect(() => {
     if (status === STATUSES.Paid) {
       setActiveStep(5);
+    }
+    if (status === STATUSES.Canceled) {
+      handleClose();
     }
   }, [status]);
 
@@ -172,7 +182,9 @@ const PaymentWidget = ({
                 <CloseIcon width="24" height="24" />
               </div>
             </div>
-            <div className="text">An error occurred during the payment process</div>
+            <div className="text">
+              An error occurred during the payment process
+            </div>
           </div>
           <div className="back-button">
             <Button variant="secondary" onClick={handleClose}>
@@ -205,7 +217,9 @@ const PaymentWidget = ({
             description={details?.data.description}
             currencyName={details?.data.currencyName}
             amount={details?.data.amount}
-            isLoading={isDetailsLoading}
+            isLoading={
+              details?.data.currencyName !== selectedCrypto?.currencyCode
+            }
           />
         );
       case 4:
@@ -223,49 +237,69 @@ const PaymentWidget = ({
             date={details?.data.expirationDate}
             requestId={requestId}
           />
-        ) : <NovaBanka
-          onClose={handleClose}
-          onNext={handleNextStep}
-          onBack={handleBackToFirstStep}
-          onReset={reset}
-          onError={handleError}
-          selectedCrypto={selectedCrypto}
-          paymentRequest={details?.data}
-        />;
+        ) : (
+          <NovaBanka
+            onClose={handleClose}
+            onNext={() => {
+              setActiveStep(999);
+            }}
+            onBack={handleBackToFirstStep}
+            onReset={reset}
+            onError={handleError}
+            selectedCrypto={selectedCrypto}
+            paymentRequest={details?.data}
+          />
+        );
       case 5:
         return <PaymentStatus onClose={handleClose} />;
+
+      case 999:
+        return (
+          <PaymentStatusWaiting
+            onClose={handleClose}
+            setActiveStep={setActiveStep}
+          />
+        );
     }
   };
 
-  const renderCardSteps = (step: number) => {
-    switch (step) {
-      case 2:
-        return <CardDetails onClose={handleBackStep} onNext={handleNextStep} />;
-      case 3:
-        return (
-          <OrderSummary
-            title={details?.data.title}
-            description={details?.data.description}
-            currencyName={details?.data.currencyName || details?.data.baseCurrencyName}
-            amount={details?.data.amount || details?.data.baseAmount}
-            isLoading={isDetailsLoading}
-            onClose={handleBackStep}
-            onNext={handleNextStep}
-          />
-        );
-      case 4:
-        return <PaymentStatus onClose={handleClose} />;
-    }
-  };
+  // const renderCardSteps = (step: number) => {
+  //   switch (step) {
+  //     case 2:
+  //       return <CardDetails onClose={handleBackStep} onNext={handleNextStep} />;
+  //     case 3:
+  //       return (
+  //         <OrderSummary
+  //           title={details?.data.title}
+  //           description={details?.data.description}
+  //           currencyName={details?.data.currencyName || details?.data.baseCurrencyName}
+  //           amount={details?.data.amount || details?.data.baseAmount}
+  //           isLoading={isDetailsLoading}
+  //           onClose={handleBackStep}
+  //           onNext={handleNextStep}
+  //         />
+  //       );
+  //     case 4:
+  //       return <PaymentStatus onClose={handleClose} />;
+  //   }
+  // };
 
   return (
     <div className="widget-container">
       <style>{styles.toString()}</style>
-      {!error && method && activeStep <= PAYMENT_METHOD_STEPS[method].length && (
-        <Stepper steps={PAYMENT_METHOD_STEPS[method]} activeStep={activeStep} />
+      {!error &&
+        method &&
+        activeStep <= PAYMENT_METHOD_STEPS[method].length && (
+          <Stepper
+            steps={PAYMENT_METHOD_STEPS[method]}
+            activeStep={activeStep}
+          />
+        )}
+      {!method && (
+        <SelectPayment onClick={handleSelectPayment} onClose={handleClose} />
       )}
-      {!method && <SelectPayment onClick={handleSelectPayment} onClose={handleClose} />}
-      {method === PaymentMethods.Crypto && renderCryptoSteps(activeStep, method)}
+      {method === PaymentMethods.Crypto &&
+        renderCryptoSteps(activeStep, method)}
       {method === PaymentMethods.Card && renderCryptoSteps(activeStep, method)}
       {/*{method === PaymentMethods.Card && renderCardSteps(activeStep, method)}*/}
     </div>

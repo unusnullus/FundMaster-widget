@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <title>Payment widget</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
   </head>
   <body>
     <style>
@@ -32,7 +35,8 @@
         color: rgba(0, 0, 0, 0.85);
         cursor: pointer;
         display: inline-flex;
-        font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: system-ui, -apple-system, system-ui, "Helvetica Neue",
+          Helvetica, Arial, sans-serif;
         font-size: 14px;
         font-weight: 500;
         justify-content: center;
@@ -72,7 +76,9 @@
     <div id="payment-widget-container"></div>
     <div class="buttons">
       <button id="open-widget-button" class="button">Buy $10</button>
-      <button id="open-widget-voluntary" class="button">Voluntary payment</button>
+      <button id="open-widget-voluntary" class="button">
+        Voluntary payment
+      </button>
       <button id="open-widget-exeption" class="button">Buy (exeption)</button>
       <button id="theme-toggle" class="button">Dark mode</button>
     </div>
@@ -80,11 +86,14 @@
     <script src="./payment-widget.js" type="text/javascript"></script>
     <script type="text/javascript">
       function generateUUID() {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-          const r = (Math.random() * 16) | 0,
-            v = c === "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            const r = (Math.random() * 16) | 0,
+              v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          }
+        );
       }
 
       function createUUIDCycle() {
@@ -113,7 +122,9 @@
         if (appRoot) {
           const theme = isDarkMode ? "dark" : "light";
           appRoot.setAttribute("data-theme", theme);
-          themeToggleButton.textContent = isDarkMode ? "Light mode" : "Dark mode";
+          themeToggleButton.textContent = isDarkMode
+            ? "Light mode"
+            : "Dark mode";
         }
       };
 
@@ -122,38 +133,44 @@
         updateTheme();
       });
 
-      document.getElementById("open-widget-button").addEventListener("click", function () {
-        const openWidgetEvent = new CustomEvent("open-widget", {
-          detail: {
-            uid: getUUID(),
-            operationId: generateUUID(),
-            title: "Item 1",
-            description: "Item description",
-            baseAmount: "10",
-            baseCurrencyName: "USD",
-            redirectUrl: window.location.href,
-          },
+      document
+        .getElementById("open-widget-button")
+        .addEventListener("click", function () {
+          const openWidgetEvent = new CustomEvent("open-widget", {
+            detail: {
+              uid: getUUID(),
+              operationId: generateUUID(),
+              title: "Item 1",
+              description: "Item description",
+              baseAmount: "10",
+              baseCurrencyName: "USD",
+              redirectUrl: window.location.href,
+            },
+          });
+          window.dispatchEvent(openWidgetEvent);
         });
-        window.dispatchEvent(openWidgetEvent);
-      });
 
-      document.getElementById("open-widget-voluntary").addEventListener("click", function () {
-        const openWidgetEvent = new CustomEvent("open-widget", {
-          detail: {
-            uid: getUUID(),
-            operationId: generateUUID(),
-            title: "Item 1",
-            description: "Item description",
-            redirectUrl: window.location.href,
-          },
+      document
+        .getElementById("open-widget-voluntary")
+        .addEventListener("click", function () {
+          const openWidgetEvent = new CustomEvent("open-widget", {
+            detail: {
+              uid: getUUID(),
+              operationId: generateUUID(),
+              title: "Item 1",
+              description: "Item description",
+              redirectUrl: window.location.href,
+            },
+          });
+          window.dispatchEvent(openWidgetEvent);
         });
-        window.dispatchEvent(openWidgetEvent);
-      });
 
-      document.getElementById("open-widget-exeption").addEventListener("click", function () {
-        const openWidgetEvent = new CustomEvent("open-widget");
-        window.dispatchEvent(openWidgetEvent);
-      });
+      document
+        .getElementById("open-widget-exeption")
+        .addEventListener("click", function () {
+          const openWidgetEvent = new CustomEvent("open-widget");
+          window.dispatchEvent(openWidgetEvent);
+        });
     </script>
   </body>
 </html>

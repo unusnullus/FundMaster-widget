@@ -8,6 +8,12 @@
   font-size: 16px;
   transition: all 0.2s;
 }
+.widget-button:disabled {
+  pointer-events: none;
+  background: var(--widget-grey);
+  color: var(--widget-button-text-color);
+  border: 1px solid var(--widget-grey);
+}
 
 .primary-button {
   background: var(--widget-blue);

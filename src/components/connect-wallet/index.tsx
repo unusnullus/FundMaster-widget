@@ -14,14 +14,14 @@ import USDTTRXIcon from "../../assets/USDT-trx.svg";
 import SearchIcon from "../../assets/search.svg";
 
 import styles from "./styles.css";
-import {FunctionalComponent} from "preact";
-import {useEffect, useState} from "preact/hooks";
+import { FunctionalComponent } from "preact";
+import { useEffect, useState } from "preact/hooks";
 import Button from "../button";
-import {usePaymentOptions} from "../../services/customer/use-payment-options";
-import {PaymentOption} from "../../types/merchant";
-import {usePayIn} from "../../services/customer/use-pay-in";
-import {formatNumber} from "../../lib/format-number";
-import {PaymentMethods} from "../../constants/enums";
+import { usePaymentOptions } from "../../services/customer/use-payment-options";
+import { PaymentOption } from "../../types/merchant";
+import { usePayIn } from "../../services/customer/use-pay-in";
+import { formatNumber } from "../../lib/format-number";
+import { PaymentMethods } from "../../constants/enums";
 
 interface ConnectWalletProps {
   onNext: () => void;
@@ -34,17 +34,17 @@ interface ConnectWalletProps {
 }
 
 const CRYPTO_ICONS: Record<string, FunctionalComponent> = {
-  "USDFIAT": UsdIcon,
-  "EURFIAT": EurIcon,
-  "BTCBTC_TEST": BitcoinIcon,
-  "ETHETH_SEPOLIA": EthereumIcon,
-  "USDTETH_SEPOLIA": UsdtIcon,
-  "USDCETH_SEPOLIA": UsdcIcon,
-  "BNBBNB_TEST": BNBBNBIcon,
-  "TRXTRX_TEST": TRXTRXIcon,
-  "GXAGETH_SEPOLIA": GXAGETHIcon,
-  "USDTBNB_TEST": USDTBNBIcon,
-  "USDTTRX_TEST": USDTTRXIcon,
+  USDFIAT: UsdIcon,
+  EURFIAT: EurIcon,
+  BTCBTC_TEST: BitcoinIcon,
+  ETHETH_SEPOLIA: EthereumIcon,
+  USDTETH_SEPOLIA: UsdtIcon,
+  USDCETH_SEPOLIA: UsdcIcon,
+  BNBBNB_TEST: BNBBNBIcon,
+  TRXTRX_TEST: TRXTRXIcon,
+  GXAGETH_SEPOLIA: GXAGETHIcon,
+  USDTBNB_TEST: USDTBNBIcon,
+  USDTTRX_TEST: USDTTRXIcon,
 };
 
 // const WALLET_LIST = [
@@ -67,7 +67,11 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
   const [cryptoSearch, setCryptoSearch] = useState("");
   // const [walletSearch, setWalletSearch] = useState("");
 
-  const { data: paymentOptions, isLoading, isError } = usePaymentOptions(token);
+  const {
+    data: paymentOptions,
+    isFetching: isLoading,
+    isError,
+  } = usePaymentOptions(token);
   const { mutate } = usePayIn(onError);
 
   useEffect(() => {
@@ -97,7 +101,11 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
 
   const handleNext = () => {
     if (!selectedCrypto) return;
-    mutate({ token, currencyName: selectedCrypto.currencyCode, networkCode: selectedCrypto.networkCode });
+    mutate({
+      token,
+      currencyName: selectedCrypto.currencyCode,
+      networkCode: selectedCrypto.networkCode,
+    });
     onNext();
   };
 
@@ -154,37 +162,57 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
             </div>
           )}
           {!isLoading &&
-            filteredCryptoList?.filter(f=> (method === PaymentMethods.Crypto && !f.isFiat) || (method === PaymentMethods.Card && f.isFiat)).map((p, index) => {
-              const { currencyTitle, currencyCode, amount, networkCode } = p;
-              const Icon = CRYPTO_ICONS[currencyCode+networkCode];
+            filteredCryptoList
+              ?.filter(
+                (f) =>
+                  (method === PaymentMethods.Crypto && !f.isFiat) ||
+                  (method === PaymentMethods.Card && f.isFiat)
+              )
+              .map((p, index) => {
+                const { currencyTitle, currencyCode, amount, networkCode } = p;
+                const Icon = CRYPTO_ICONS[currencyCode + networkCode];
 
-              return (
-                <div
-                  className={`crypto-item pointer ${selectedCrypto?.currencyTitle === currencyTitle ? "selected" : ""}`}
-                  key={index}
-                  onClick={onSelect(p)}
-                >
-                  <div className="item-data-container">
-                    {CRYPTO_ICONS[currencyCode+networkCode] ? <Icon /> : <div className={`token-logo ${currencyCode+networkCode}`} />}
-                    <div className="item-data">
-                      <span className="title">{currencyTitle}</span>
-                      {amount && (
-                        <span>
-                          {formatNumber(amount, 6)} {currencyCode}
-                        </span>
+                return (
+                  <div
+                    className={`crypto-item pointer ${
+                      selectedCrypto?.currencyTitle === currencyTitle
+                        ? "selected"
+                        : ""
+                    }`}
+                    key={index}
+                    onClick={onSelect(p)}
+                  >
+                    <div className="item-data-container">
+                      {CRYPTO_ICONS[currencyCode + networkCode] ? (
+                        <Icon />
+                      ) : (
+                        <div
+                          className={`token-logo ${currencyCode + networkCode}`}
+                        />
                       )}
+                      <div className="item-data">
+                        <span className="title">{currencyTitle}</span>
+                        {amount && (
+                          <span>
+                            {formatNumber(amount, 6)} {currencyCode}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
         </div>
       </div>
       <div className="footer-button-container">
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleNext}>
+        <Button
+          disabled={!selectedCrypto}
+          variant="primary"
+          onClick={handleNext}
+        >
           Continue
         </Button>
       </div>

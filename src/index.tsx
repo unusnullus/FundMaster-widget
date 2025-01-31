@@ -8,7 +8,12 @@ import { MerchantPaymentRequest } from "types/merchant";
 
 const queryClient = new QueryClient();
 
-const PaymentWidgetRoot = ({ shadowRoot, fontFamily, onClose, ...paymentData }: EmbedProps) => {
+const PaymentWidgetRoot = ({
+  shadowRoot,
+  fontFamily,
+  onClose,
+  ...paymentData
+}: EmbedProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalStyle />
@@ -46,7 +51,12 @@ export const init = ({ rootId, fontFamily }: RootProps) => {
       existingStyles.forEach((style) => style.remove());
 
       render(
-        <PaymentWidgetRoot shadowRoot={appRoot.shadowRoot} fontFamily={fontFamily} onClose={closeWidget} {...data} />,
+        <PaymentWidgetRoot
+          shadowRoot={appRoot.shadowRoot}
+          fontFamily={fontFamily}
+          onClose={closeWidget}
+          {...data}
+        />,
         appRoot.shadowRoot
       );
     }
