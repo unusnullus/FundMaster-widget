@@ -4,13 +4,14 @@ import styles from "./styles.css";
 interface ButtonProps {
   disabled?: boolean;
   onClick?: () => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   children: ComponentChildren;
 }
 
 const BUTTON_VARIANTS = {
   primary: "primary-button",
   secondary: "secondary-button",
+  danger: "danger-button",
 };
 
 const Button: FunctionalComponent<ButtonProps> = ({

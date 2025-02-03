@@ -35,3 +35,13 @@
 .secondary-button:hover {
   border: 1px solid var(--widget-blue);
 }
+
+.danger-button {
+  border: 1px solid var(--widget-red);
+  color: var(--widget-button-text-color);
+  background: var(--widget-red);
+}
+
+.danger-button:hover {
+  border: 1px solid var(--widget-light-red);
+}

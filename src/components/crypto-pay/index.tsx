@@ -8,6 +8,7 @@ import CloseIcon from "../../assets/close.svg";
 
 import styles from "./styles.css";
 import Button from "../button";
+import Modal from "../modal";
 import { formatNumber } from "../../lib/format-number";
 import { useCountdown } from "../../hooks/use-count-down";
 import { useCancelPaymentRequest } from "../../services/merchant/use-cancel-payment-request";
@@ -41,6 +42,7 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
   selectedCrypto,
 }) => {
   const [isTimeOut, setIsTimeOut] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { mutate } = useCancelPaymentRequest(onError);
   const { copyToClipboard } = useClipboard();
 
@@ -108,10 +110,18 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
               <CopyIcon className="pointer" onClick={handleCopy(address)} />
             </div>
           </div>
-          //todo add back button
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
+
+          <div className="footer-button-container">
+            <Button variant="secondary" onClick={onBack}>
+              Back
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setIsConfirmationModalOpen(true)}
+            >
+              Cancel
+            </Button>
+          </div>
         </>
       )}
       {isTimeOut && (
@@ -123,6 +133,24 @@ const CryptoPay: FunctionalComponent<ConnectWalletProps> = ({
             Back
           </Button>
         </>
+      )}
+      {isConfirmationModalOpen && (
+        <Modal onClose={() => setIsConfirmationModalOpen(false)}>
+          <div>
+            <p>Are you sure you want to cancel this transaction?</p>
+            <div className="footer-button-container">
+              <Button
+                variant="secondary"
+                onClick={() => setIsConfirmationModalOpen(false)}
+              >
+                No
+              </Button>
+              <Button variant="danger" onClick={onClose}>
+                Yes
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

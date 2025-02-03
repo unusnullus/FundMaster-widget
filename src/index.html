@@ -11,6 +11,34 @@
   </head>
   <body>
     <style>
+      :root {
+        --widget-background-color: #ffffff;
+        --widget-text-color: #000000;
+        --widget-blue: #277cfb;
+        --widget-dark-blue: #1b56af;
+        --widget-light-blue: #f2f7ff;
+        --widget-red: #f94a4a;
+        --widget-light-red: #ffe8e7;
+        --widget-stroke: #dce4f1;
+        --widget-grey: #8c95a5;
+        --widget-grey-light: #f9fafb;
+        --widget-button-text-color: #ffffff;
+      }
+
+      [data-theme="dark"] {
+        --widget-background-color: #1a1d1f; /* Darker background for better contrast */
+        --widget-text-color: #e0e0e0; /* Light gray for better readability */
+        --widget-blue: #4a90e2; /* Slightly brighter blue for better visibility */
+        --widget-dark-blue: #1b56af; /* Kept the same */
+        --widget-light-blue: #1e2a3a; /* Darker blue for dark theme */
+        --widget-red: #ff6b6b; /* Brighter red for better visibility */
+        --widget-light-red: #4a2f2d; /* Adjusted for dark theme */
+        --widget-stroke: #2d3238; /* Slightly lighter stroke for better visibility */
+        --widget-grey: #8c95a5; /* Lightened gray for better contrast */
+        --widget-grey-light: #232629; /* Darker gray for dark theme */
+        --widget-button-text-color: #ffffff; /* Kept the same */
+      }
+
       html,
       body {
         height: 100%;
@@ -22,65 +50,93 @@
         height: 100%;
         justify-content: center;
         align-items: center;
-        gap: 5px;
+        gap: 20px;
       }
 
-      .button {
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        background-color: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 0.25rem;
-        box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
-        box-sizing: border-box;
-        color: rgba(0, 0, 0, 0.85);
-        cursor: pointer;
-        display: inline-flex;
-        font-family: system-ui, -apple-system, system-ui, "Helvetica Neue",
-          Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        font-weight: 500;
         justify-content: center;
-        line-height: 0;
-        margin: 0;
-        min-height: 2rem;
-        padding: 5px 10px;
-        position: relative;
-        text-decoration: none;
-        transition: all 250ms;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        vertical-align: baseline;
-        width: auto;
+        height: 100vh;
+        background-color: var(--widget-background-color);
+        color: var(--widget-text-color);
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .card {
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 200px;
+        transition: background 0.3s;
+      }
+      [data-theme="dark"] .card {
+        background: var(--widget-light-blue);
+      }
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .description {
+        font-size: 14px;
+        color: var(--widget-grey);
+        margin-bottom: 15px;
+      }
+      .price {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--widget-text-color);
+        margin-bottom: 15px;
+      }
+      .buy-button {
+        background: var(--widget-blue);
+        color: var(--widget-button-text-color);
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .buy-button:hover {
+        background: var(--widget-dark-blue);
       }
 
-      .button:hover,
-      .button:focus {
-        border-color: rgba(0, 0, 0, 0.15);
-        box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-        color: rgba(0, 0, 0, 0.65);
-      }
-
-      .button:hover {
-        transform: translateY(-1px);
-      }
-
-      .button:active {
-        background-color: #f0f0f1;
-        border-color: rgba(0, 0, 0, 0.15);
-        box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
-        color: rgba(0, 0, 0, 0.65);
-        transform: translateY(0);
+      #theme-toggle {
+        position: absolute;
+        right: 20px;
+        top: 20px;
       }
     </style>
     <div id="payment-widget-container"></div>
+
+    <button id="theme-toggle" class="button">Dark mode</button>
     <div class="buttons">
-      <button id="open-widget-button" class="button">Buy $10</button>
-      <button id="open-widget-voluntary" class="button">
-        Voluntary payment
-      </button>
-      <button id="open-widget-exeption" class="button">Buy (exeption)</button>
-      <button id="theme-toggle" class="button">Dark mode</button>
+      <div class="card">
+        <div class="title">Small Coin Pack</div>
+        <div class="description">
+          Get 1,000 in-game coins to boost your gameplay.
+        </div>
+        <div class="price">$4.99</div>
+        <button id="open-widget-button" class="buy-button">Buy Now</button>
+      </div>
+      <div class="card">
+        <div class="title">Medium Coin Pack</div>
+        <div class="description">
+          Receive 5,000 in-game coins to enhance your experience.
+        </div>
+        <div class="price">$19.99</div>
+        <button id="open-widget-voluntary" class="buy-button">Buy Now</button>
+      </div>
+      <div class="card">
+        <div class="title">Large Coin Pack</div>
+        <div class="description">
+          Stock up with 12,000 in-game coins for an ultimate advantage.
+        </div>
+        <div class="price">$49.99</div>
+        <button id="open-widget-exeption" class="buy-button">Buy Now</button>
+      </div>
     </div>
 
     <script src="./payment-widget.js" type="text/javascript"></script>
@@ -118,14 +174,9 @@
       let isDarkMode = false;
 
       const updateTheme = () => {
-        const appRoot = document.querySelector("#payment-widget-container");
-        if (appRoot) {
-          const theme = isDarkMode ? "dark" : "light";
-          appRoot.setAttribute("data-theme", theme);
-          themeToggleButton.textContent = isDarkMode
-            ? "Light mode"
-            : "Dark mode";
-        }
+        const theme = isDarkMode ? "dark" : "light";
+        document.body.setAttribute("data-theme", theme);
+        themeToggleButton.textContent = isDarkMode ? "Light mode" : "Dark mode";
       };
 
       themeToggleButton.addEventListener("click", () => {

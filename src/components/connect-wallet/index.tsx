@@ -206,7 +206,7 @@ const ConnectWallet: FunctionalComponent<ConnectWalletProps> = ({
       </div>
       <div className="footer-button-container">
         <Button variant="secondary" onClick={onClose}>
-          Cancel
+          Back
         </Button>
         <Button
           disabled={!selectedCrypto}

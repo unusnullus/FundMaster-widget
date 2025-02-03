@@ -16,19 +16,19 @@ export const GlobalStyle = createGlobalStyle`
     --widget-button-text-color: #ffffff;
   }
 
-  [data-theme="dark"] {
-    --widget-background-color: #202224;
-    --widget-text-color: #ffffff;
-    --widget-blue: #277cfb;
-    --widget-dark-blue: #1b56af;
-    --widget-light-blue: #f2f7ff;
-    --widget-red: #f94a4a;
-    --widget-light-red: #4a2f2d;
-    --widget-stroke: #33373e;
-    --widget-grey: #5f6875;
-    --widget-grey-light: #282c30;
-    --widget-button-text-color: #ffffff;
-  }
+[data-theme="dark"] {
+  --widget-background-color: #1a1d1f; /* Darker background for better contrast */
+  --widget-text-color: #e0e0e0; /* Light gray for better readability */
+  --widget-blue: #4a90e2; /* Slightly brighter blue for better visibility */
+  --widget-dark-blue: #1b56af; /* Kept the same */
+  --widget-light-blue: #1e2a3a; /* Darker blue for dark theme */
+  --widget-red: #ff6b6b; /* Brighter red for better visibility */
+  --widget-light-red: #4a2f2d; /* Adjusted for dark theme */
+  --widget-stroke: #2d3238; /* Slightly lighter stroke for better visibility */
+  --widget-grey: #8c95a5; /* Lightened gray for better contrast */
+  --widget-grey-light: #232629; /* Darker gray for dark theme */
+  --widget-button-text-color: #ffffff; /* Kept the same */
+}
 `;
 
 export const AppContainer = styled.div<AppContainerProps>`

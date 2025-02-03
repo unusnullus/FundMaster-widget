@@ -97,7 +97,10 @@ const PaymentWidget = ({
       setActiveStep(5);
     }
     if (status === STATUSES.Canceled) {
-      handleClose();
+      //todo unclear render issue if no timeout
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
     }
   }, [status]);
 
@@ -129,7 +132,7 @@ const PaymentWidget = ({
   }, [requestId]);
 
   const handleClose = () => {
-    if (requestId) {
+    if (status !== STATUSES.Canceled && requestId) {
       mutate(requestId);
     } else {
       abortController.abort();
@@ -155,7 +158,8 @@ const PaymentWidget = ({
 
   const handleBackStep = () => {
     if (activeStep === 2) {
-      handleClose();
+      setMethod(null);
+      setSelectedCrypto(null);
       return;
     }
 
