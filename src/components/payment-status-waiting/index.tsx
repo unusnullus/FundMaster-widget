@@ -1,5 +1,3 @@
-import SuccessIcon from "../../assets/success.svg";
-import { useEffect, useState } from "preact/hooks";
 import { FunctionalComponent } from "preact";
 import Button from "../button";
 import styles from "./styles.css";
@@ -17,11 +15,19 @@ const PaymentStatusWaiting: FunctionalComponent<PaymentStatusProps> = ({
   return (
     <div className="step-container">
       <style>{styles.toString()}</style>
-      <div className="loader-container ">
+      <div className="loader-container">
         <div className="loader" />
+        <span className="status">
+          Please wait <br />
+          Your payment is being processed
+        </span>
       </div>
+
       {/* todo */}
-      <button onClick={onClose}>Close //todo timeout</button>
+      {/* <Button variant="secondary" onClick={onClose}>
+          Close
+        </Button> */}
+      {/* <button onClick={onClose}>Close //todo timeout</button> */}
     </div>
   );
 };
