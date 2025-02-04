@@ -47,15 +47,9 @@
 
       .buttons {
         display: flex;
-        height: 100%;
         justify-content: center;
         align-items: center;
         gap: 20px;
-      }
-      @media (max-width: 768px) {
-        .buttons {
-          flex-direction: column;
-        }
       }
 
       body {
@@ -64,10 +58,13 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        overflow: auto;
+        height: fit-content;
+        min-height: 100vh;
         background-color: var(--widget-background-color);
         color: var(--widget-text-color);
         transition: background-color 0.3s, color 0.3s;
+        position: relative;
       }
       .card {
         padding: 20px;
@@ -106,6 +103,18 @@
       }
       .buy-button:hover {
         background: var(--widget-dark-blue);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          justify-content: flex-start;
+        }
+
+        .buttons {
+          flex-direction: column;
+          justify-content: flex-start;
+          padding: 60px 0 40px;
+        }
       }
 
       #theme-toggle {
@@ -214,7 +223,8 @@
               uid: getUUID(),
               operationId: generateUUID(),
               title: "Medium Coin Pack",
-              description: "Receive 5,000 in-game coins to enhance your experience.",
+              description:
+                "Receive 5,000 in-game coins to enhance your experience.",
               baseAmount: "5",
               baseCurrencyName: "EUR",
               redirectUrl: window.location.href,

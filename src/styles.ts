@@ -32,16 +32,18 @@ export const GlobalStyle = createGlobalStyle`
 `;
 
 export const AppContainer = styled.div<AppContainerProps>`
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   font-family: ${(p) => p.fontFamily || "sans-serif"};
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1400;
+  box-sizing: border-box;
+  padding: 0 10px;
   background-color: rgba(0, 0, 0, 0.5);
   & {
     * {
