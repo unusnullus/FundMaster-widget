@@ -37,13 +37,14 @@ export const AppContainer = styled.div<AppContainerProps>`
   top: 0;
   font-family: ${(p) => p.fontFamily || "sans-serif"};
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  overflow: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1400;
   box-sizing: border-box;
-  padding: 0 10px;
+  padding: 20px 10px;
   background-color: rgba(0, 0, 0, 0.5);
   & {
     * {
