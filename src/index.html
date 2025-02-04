@@ -118,7 +118,7 @@
         <div class="description">
           Get 1,000 in-game coins to boost your gameplay.
         </div>
-        <div class="price">$4.99</div>
+        <div class="price">EUR 1</div>
         <button id="open-widget-button" class="buy-button">Buy Now</button>
       </div>
       <div class="card">
@@ -126,15 +126,15 @@
         <div class="description">
           Receive 5,000 in-game coins to enhance your experience.
         </div>
-        <div class="price">$19.99</div>
+        <div class="price">EUR 5</div>
         <button id="open-widget-voluntary" class="buy-button">Buy Now</button>
       </div>
       <div class="card">
-        <div class="title">Large Coin Pack</div>
+        <div class="title">Large Coin Pack (will show error)</div>
         <div class="description">
           Stock up with 12,000 in-game coins for an ultimate advantage.
         </div>
-        <div class="price">$49.99</div>
+        <div class="price">EUR 49.99</div>
         <button id="open-widget-exeption" class="buy-button">Buy Now</button>
       </div>
     </div>
@@ -193,8 +193,8 @@
               operationId: generateUUID(),
               title: "Small Coin Pack",
               description: "Get 1,000 in-game coins to boost your gameplay.",
-              baseAmount: "10",
-              baseCurrencyName: "USD",
+              baseAmount: "1",
+              baseCurrencyName: "EUR",
               redirectUrl: window.location.href,
             },
           });
@@ -210,6 +210,8 @@
               operationId: generateUUID(),
               title: "Medium Coin Pack",
               description: "Receive 5,000 in-game coins to enhance your experience.",
+              baseAmount: "5",
+              baseCurrencyName: "EUR",
               redirectUrl: window.location.href,
             },
           });
