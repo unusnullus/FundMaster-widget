@@ -52,6 +52,11 @@
         align-items: center;
         gap: 20px;
       }
+      @media (max-width: 768px) {
+        .buttons {
+          flex-direction: column;
+        }
+      }
 
       body {
         font-family: Arial, sans-serif;
@@ -209,7 +214,8 @@
               uid: getUUID(),
               operationId: generateUUID(),
               title: "Medium Coin Pack",
-              description: "Receive 5,000 in-game coins to enhance your experience.",
+              description:
+                "Receive 5,000 in-game coins to enhance your experience.",
               redirectUrl: window.location.href,
             },
           });
