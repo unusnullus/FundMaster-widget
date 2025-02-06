@@ -93,14 +93,8 @@ const PaymentWidget = ({
   }, [isDetailsError]);
 
   useEffect(() => {
-    if (status === STATUSES.Paid) {
+    if (status === STATUSES.Paid || status === STATUSES.Canceled) {
       setActiveStep(5);
-    }
-    if (status === STATUSES.Canceled) {
-      //todo unclear render issue if no timeout
-      setTimeout(() => {
-        handleClose();
-      }, 1000);
     }
   }, [status]);
 
@@ -255,7 +249,7 @@ const PaymentWidget = ({
           />
         );
       case 5:
-        return <PaymentStatus onClose={handleClose} />;
+        return <PaymentStatus status={status} onClose={handleClose} />;
 
       case 999:
         return (
